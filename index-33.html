@@ -1,0 +1,2055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Department of Mechanical Engineering – Ridgeway Institute of Technology</title>
+<meta name="description" content="Faculty, student projects, a 3D workshop tool viewer, engineering calculators and machine booking for the Mechanical Engineering department.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#ECEEEF;
+  --paper-2:#E1E5E8;
+  --ink:#101820;
+  --steel:#566573;
+  --line:#C3CBD1;
+  --blue:#1B4DDB;
+  --blue-d:#133AA8;
+  --safety:#F26B1D;
+  --night:#0F171F;
+  --night-2:#18232E;
+  --ok:#1F8F5F;
+  --display:'Archivo','Arial Narrow',sans-serif;
+  --body:'IBM Plex Sans',system-ui,sans-serif;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:72px}
+body{font-family:var(--body);background:var(--paper);color:var(--ink);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:var(--display);font-stretch:112%;font-weight:800;line-height:1.05;letter-spacing:-.01em}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--safety);outline-offset:2px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+section{padding:96px 0}
+.lead{max-width:60ch;color:var(--steel);font-size:1.075rem}
+.sec-head{margin-bottom:44px}
+.sec-head h2{font-size:clamp(2rem,4.2vw,3.1rem);margin-bottom:14px;max-width:18ch}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border:2px solid var(--ink);background:var(--ink);color:#fff;font-weight:600;text-decoration:none;cursor:pointer;border-radius:3px;transition:background .15s,color .15s,border-color .15s}
+.btn:hover{background:var(--blue);border-color:var(--blue)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.btn.ghost:hover{background:var(--ink);color:#fff;border-color:var(--ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn:disabled:hover{background:var(--ink);border-color:var(--ink)}
+
+/* nav */
+header.top{position:sticky;top:0;z-index:50;background:rgba(236,238,239,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+.nav{display:flex;align-items:center;justify-content:space-between;height:64px}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none}
+.brand svg{width:34px;height:34px;flex:none}
+.brand b{display:block;font-family:var(--display);font-stretch:112%;font-weight:800;font-size:1.02rem;line-height:1.1}
+.brand span{display:block;font-size:.76rem;color:var(--steel);line-height:1.2}
+.nav ul{display:flex;gap:26px;list-style:none;align-items:center}
+.nav ul a{text-decoration:none;font-weight:500;font-size:.95rem;padding:6px 0;border-bottom:2px solid transparent}
+.nav ul a:hover{border-color:var(--blue)}
+.menu-btn{display:none;background:none;border:2px solid var(--ink);padding:6px 12px;border-radius:3px;cursor:pointer;font-weight:600}
+
+/* hero */
+.hero{padding:56px 0 72px}
+.hero-grid{display:grid;grid-template-columns:1.05fr 1fr;gap:40px;align-items:center}
+.hero h1{font-size:clamp(2.6rem,6.2vw,4.9rem);font-stretch:118%;margin-bottom:22px}
+.hero p.lead{margin-bottom:30px}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap}
+.stage{position:relative;aspect-ratio:1/1;max-height:560px;width:100%;border:1px solid var(--line);background:
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/40px 40px,
+  linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/40px 40px,var(--paper-2);border-radius:4px;overflow:hidden}
+.stage canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.stage .cap{position:absolute;left:14px;bottom:12px;right:14px;font-size:.8rem;color:var(--steel);display:flex;justify-content:space-between;gap:10px;pointer-events:none}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:56px;border-top:2px solid var(--ink)}
+.facts div{padding:16px 16px 0 0}
+.facts dt{font-family:var(--display);font-stretch:112%;font-weight:800;font-size:1.35rem}
+.facts dd{color:var(--steel);font-size:.9rem}
+
+/* workshop viewer */
+#workshop{background:var(--night);color:#E8EDF1}
+#workshop .lead{color:#9FB0BE}
+.lab{display:grid;grid-template-columns:240px 1fr 320px;gap:0;border:1px solid #2A3846;border-radius:4px;overflow:hidden;background:var(--night-2)}
+.tool-list{list-style:none;border-right:1px solid #2A3846;max-height:560px;overflow:auto}
+.tool-list button{width:100%;text-align:left;background:none;border:0;border-bottom:1px solid #2A3846;padding:14px 16px;cursor:pointer;color:#C9D4DD;border-left:4px solid transparent}
+.tool-list button b{display:block;font-weight:600;font-size:.98rem}
+.tool-list button small{color:#7F92A3;font-size:.8rem}
+.tool-list button:hover{background:#1E2C39}
+.tool-list button[aria-pressed="true"]{background:#223445;border-left-color:var(--safety);color:#fff}
+.viewer{position:relative;min-height:520px;background:radial-gradient(circle at 50% 40%,#2A3B4C,#131D27 70%)}
+.viewer canvas{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:pan-y;cursor:grab}
+.viewer canvas:active,.stage canvas:active{cursor:grabbing}
+.vbar{position:absolute;left:12px;right:12px;bottom:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;background:rgba(15,23,31,.78);border:1px solid #2A3846;padding:8px 10px;border-radius:4px}
+.vbar button{background:#223445;border:1px solid #365067;color:#E8EDF1;padding:6px 12px;border-radius:3px;cursor:pointer;font-size:.85rem}
+.vbar button[aria-pressed="true"]{background:var(--safety);border-color:var(--safety);color:#101820;font-weight:600}
+.vbar label{display:flex;gap:8px;align-items:center;font-size:.85rem;margin-left:auto}
+.vbar input[type=range]{accent-color:var(--safety);width:120px}
+.hint{position:absolute;top:12px;left:14px;font-size:.8rem;color:#8FA2B3;pointer-events:none}
+.info{padding:22px;border-left:1px solid #2A3846;overflow:auto;max-height:560px}
+.info h3{font-size:1.55rem;margin-bottom:6px;color:#fff}
+.info .cat{color:#8FA2B3;font-size:.85rem;margin-bottom:14px}
+.info p{color:#C9D4DD;font-size:.95rem;margin-bottom:16px}
+.info h4{font-size:.9rem;color:#fff;margin:14px 0 6px;font-weight:600}
+.info ul{list-style:none}
+.info li{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:6px 0;border-bottom:1px solid #2A3846;color:#C9D4DD}
+.info li span:last-child{font-family:var(--mono);font-size:.82rem;color:#fff;text-align:right}
+.safety{margin-top:16px;border-left:4px solid var(--safety);background:#2A2118;padding:10px 12px;font-size:.88rem;color:#F6D9C5}
+
+/* faculty */
+.faculty{border-top:2px solid var(--ink)}
+.faculty details{border-bottom:1px solid var(--line)}
+.faculty summary{list-style:none;display:grid;grid-template-columns:56px 1.2fr 1fr 1.4fr 24px;gap:18px;align-items:center;padding:18px 4px;cursor:pointer}
+.faculty summary::-webkit-details-marker{display:none}
+.faculty summary:hover{background:var(--paper-2)}
+.ini{width:48px;height:48px;border-radius:50%;background:var(--ink);color:#fff;display:grid;place-items:center;font-family:var(--display);font-weight:700;font-size:1rem}
+.faculty details:nth-child(3n+2) .ini{background:var(--blue)}
+.faculty details:nth-child(3n) .ini{background:var(--safety);color:var(--ink)}
+.fn{font-weight:600;font-size:1.05rem}
+.fr{color:var(--steel);font-size:.92rem}
+.fa{font-size:.92rem}
+.plus{font-size:1.4rem;transition:transform .2s;text-align:center}
+.faculty details[open] .plus{transform:rotate(45deg)}
+.fdet{display:grid;grid-template-columns:56px 1fr 1fr 1fr;gap:18px;padding:4px 4px 24px;font-size:.92rem}
+.fdet div:first-child{grid-column:2}
+.fdet b{display:block;font-size:.85rem;margin-bottom:4px}
+.fdet a{color:var(--blue)}
+
+/* students */
+#students{background:var(--paper-2)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:26px}
+.chip{border:2px solid var(--ink);background:transparent;padding:7px 16px;border-radius:99px;cursor:pointer;font-weight:500;font-size:.92rem}
+.chip[aria-pressed="true"]{background:var(--ink);color:#fff}
+.proj-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.proj{background:var(--paper);border:1px solid var(--line);padding:22px;border-top:6px solid var(--blue);display:flex;flex-direction:column;gap:10px;border-radius:2px}
+.proj[data-y="1"]{border-top-color:var(--steel)}
+.proj[data-y="2"]{border-top-color:var(--ok)}
+.proj[data-y="3"]{border-top-color:var(--blue)}
+.proj[data-y="4"]{border-top-color:var(--safety)}
+.proj h3{font-size:1.25rem;font-stretch:105%}
+.proj p{font-size:.93rem;color:var(--steel);flex:1}
+.proj .meta{display:flex;justify-content:space-between;font-size:.82rem;gap:10px;border-top:1px solid var(--line);padding-top:10px}
+.awards{margin-top:44px;display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.awards div{border-left:3px solid var(--ink);padding-left:16px}
+.awards b{display:block;font-family:var(--display);font-stretch:108%;font-size:1.1rem}
+.awards span{color:var(--steel);font-size:.9rem}
+
+/* calculators */
+.tabs{display:flex;gap:0;border-bottom:2px solid var(--ink);margin-bottom:30px;flex-wrap:wrap}
+.tabs button{background:none;border:0;padding:12px 22px;cursor:pointer;font-weight:600;border-bottom:4px solid transparent;margin-bottom:-2px}
+.tabs button[aria-selected="true"]{border-bottom-color:var(--safety)}
+.calc{display:none;grid-template-columns:1fr 1fr;gap:40px}
+.calc.on{display:grid}
+.fields{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.fields label{display:flex;flex-direction:column;font-size:.86rem;font-weight:500;gap:5px}
+.fields input,.fields select{padding:10px 12px;border:1px solid var(--steel);background:#fff;border-radius:3px;font-family:var(--mono);font-size:.95rem}
+.fields .full{grid-column:1/-1}
+.out{background:var(--ink);color:#fff;padding:26px;border-radius:3px;align-self:start}
+.out dl div{display:flex;justify-content:space-between;gap:14px;padding:10px 0;border-bottom:1px solid #2F3C48}
+.out dt{color:#A9B7C3;font-size:.92rem}
+.out dd{font-family:var(--mono);font-size:1.05rem}
+.out .verdict{margin-top:16px;padding:10px 12px;font-size:.92rem;border-left:4px solid var(--ok);background:#14281F}
+.out .verdict.bad{border-left-color:var(--safety);background:#2D1D12}
+.out .btn{margin-top:18px;background:var(--safety);border-color:var(--safety);color:var(--ink)}
+.out .btn:hover{background:#fff;border-color:#fff}
+
+/* booking */
+#book{background:var(--paper-2)}
+.book-grid{display:grid;grid-template-columns:1.25fr 1fr;gap:40px}
+.checks{border:1px solid var(--line);background:var(--paper);padding:18px 20px;margin-bottom:24px;border-radius:2px}
+.checks legend{font-weight:600;padding:0 6px}
+.checks label{display:flex;gap:10px;align-items:flex-start;padding:6px 0;font-size:.93rem}
+.checks input{margin-top:5px;accent-color:var(--blue);width:18px;height:18px}
+.bk-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:18px}
+.bk-fields label{display:flex;flex-direction:column;font-size:.86rem;font-weight:500;gap:5px}
+.bk-fields input,.bk-fields select{padding:10px 12px;border:1px solid var(--steel);background:#fff;border-radius:3px}
+.slots{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.slot{padding:12px;border:2px solid var(--ink);background:var(--paper);cursor:pointer;border-radius:3px;font-weight:500;text-align:left}
+.slot small{display:block;font-weight:400;color:var(--steel)}
+.slot[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+.slot[aria-pressed="true"] small{color:#D3DEFF}
+.slot:disabled{opacity:.45;cursor:not-allowed;text-decoration:line-through}
+.mybook{background:var(--paper);border:1px solid var(--line);padding:22px;border-radius:2px}
+.mybook h3{font-size:1.25rem;margin-bottom:14px}
+.mybook ul{list-style:none}
+.mybook li{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:.92rem}
+.mybook li button{background:none;border:1px solid var(--steel);padding:4px 10px;border-radius:3px;cursor:pointer;font-size:.8rem}
+.empty{color:var(--steel);font-size:.93rem}
+.msg{margin-top:12px;font-size:.92rem;font-weight:500;color:var(--ok);min-height:1.4em}
+
+/* notices */
+.notice-list{border-top:2px solid var(--ink)}
+.notice{display:grid;grid-template-columns:110px 1fr 130px;gap:20px;padding:18px 4px;border-bottom:1px solid var(--line);align-items:baseline}
+.notice time{font-family:var(--mono);font-size:.85rem;color:var(--steel)}
+.notice b{font-weight:600}
+.notice p{font-size:.92rem;color:var(--steel)}
+.tag{justify-self:end;font-size:.78rem;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid currentColor}
+.tag.exam{color:var(--safety)}.tag.event{color:var(--blue)}.tag.lab{color:var(--ok)}
+
+/* footer / contact */
+footer{background:var(--night);color:#C9D4DD;padding:56px 0 28px}
+.foot-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:56px}
+footer h2{color:#fff;font-size:2.1rem;margin-bottom:14px}
+footer form{display:grid;gap:12px}
+footer input,footer textarea{width:100%;padding:11px 12px;background:var(--night-2);border:1px solid #365067;color:#fff;border-radius:3px}
+footer textarea{min-height:100px;resize:vertical}
+footer .btn{background:var(--safety);border-color:var(--safety);color:var(--ink);justify-self:start}
+footer .btn:hover{background:#fff;border-color:#fff}
+footer address{font-style:normal;line-height:1.9}
+.copy{margin-top:56px;padding-top:18px;border-top:1px solid #2A3846;font-size:.83rem;color:#7F92A3}
+
+
+[hidden]{display:none!important}
+.nav ul{gap:16px}
+.nav ul a{font-size:.9rem}
+.auth{display:flex;gap:8px;align-items:center}
+.btn.sm{padding:7px 14px;font-size:.88rem}
+.nav ul a.btn{padding:7px 14px;border:2px solid var(--ink);border-radius:3px}
+.nav ul a.btn:hover{border-color:var(--blue)}
+.nav ul a.chip-user{padding:5px 12px;border:1px solid var(--line);border-radius:99px;background:var(--paper-2);white-space:nowrap}
+
+/* tool column + category */
+.tool-col{border-right:1px solid #2A3846;display:flex;flex-direction:column;max-height:560px;min-width:0}
+.tool-col select{margin:12px;padding:9px 10px;background:#223445;border:1px solid #365067;color:#fff;border-radius:3px}
+.tool-list{border-right:0;overflow:auto;flex:1;max-height:none}
+
+/* login pages */
+.login{min-height:calc(100vh - 64px);display:grid;grid-template-columns:1fr 1fr}
+.login-side{padding:64px 56px;display:flex;flex-direction:column;justify-content:center;gap:22px;color:#fff;background:var(--blue)}
+.login.teacher .login-side{background:var(--night)}
+.login-side h2{font-size:clamp(2rem,4vw,3.2rem);max-width:14ch}
+.login-side ul{list-style:none;display:grid;gap:12px}
+.login-side li{padding-left:16px;border-left:3px solid rgba(255,255,255,.55)}
+.login.teacher .login-side li{border-left-color:var(--safety)}
+.login-side .back{color:inherit;opacity:.85;text-decoration:none;font-size:.92rem}
+.login-side .back:hover{opacity:1;text-decoration:underline}
+.login-form{padding:64px 56px;display:flex;flex-direction:column;justify-content:center;max-width:580px;width:100%}
+.login-form h1{font-size:clamp(2rem,3.6vw,2.8rem);margin-bottom:10px}
+.login-form .lead{margin-bottom:26px}
+.login-form form{display:grid;gap:14px;margin-bottom:6px}
+.login-form label{display:flex;flex-direction:column;font-size:.86rem;font-weight:500;gap:5px}
+.login-form input{padding:11px 12px;border:1px solid var(--steel);background:#fff;border-radius:3px}
+.login-form .btn{justify-content:center}
+.msg.warn{color:#B35A00}
+.or{display:flex;align-items:center;gap:14px;color:var(--steel);font-size:.88rem;margin:18px 0}
+.or::before,.or::after{content:"";flex:1;height:1px;background:var(--line)}
+.login-form .guest-wrap{display:grid;gap:12px}
+.btn.guest{background:var(--blue);border-color:var(--blue)}
+.btn.guest:hover{background:var(--blue-d);border-color:var(--blue-d)}
+.login.teacher .btn.guest{background:var(--safety);border-color:var(--safety);color:var(--ink)}
+.login.teacher .btn.guest:hover{background:var(--ink);border-color:var(--ink);color:#fff}
+.switch{margin-top:20px;font-size:.92rem;color:var(--blue);font-weight:600}
+.login-note{background:#FFF3E6;border-left:4px solid var(--safety);padding:10px 14px;margin-bottom:18px;font-size:.92rem}
+.login-note a{color:var(--blue);font-weight:600}
+
+/* dashboard */
+.dash{padding-top:48px;padding-bottom:88px}
+.dash-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:26px}
+.dash h1{font-size:clamp(2rem,4vw,3rem);margin-bottom:10px}
+.role-badge{font-weight:600;padding:6px 16px;border-radius:99px;color:#fff;text-transform:capitalize}
+.role-badge.student{background:var(--blue)}
+.role-badge.teacher{background:var(--ink)}
+.quick{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:36px}
+.quick a{padding:10px 18px;border:2px solid var(--ink);border-radius:3px;text-decoration:none;font-weight:600}
+.quick a:hover{background:var(--ink);color:#fff}
+.dash-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+.panel{border-top:2px solid var(--ink);padding-top:14px;margin-bottom:28px}
+.panel h2{font-size:1.3rem;margin-bottom:14px}
+.dlist{list-style:none}
+.dlist li{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.dlist .acts{display:flex;gap:6px;flex:none}
+.dlist button{border:1px solid var(--steel);background:none;padding:4px 10px;border-radius:3px;cursor:pointer;font-size:.82rem}
+.dlist button:hover{background:var(--ink);color:#fff}
+.st{font-size:.75rem;font-weight:600;padding:2px 8px;border-radius:99px;border:1px solid currentColor}
+.st.Pending{color:#B35A00}.st.Approved{color:var(--ok)}.st.Rejected{color:#B3261E}
+.dform{display:grid;gap:10px}
+.dform input,.dform textarea,.dform select{padding:10px 12px;border:1px solid var(--steel);background:#fff;border-radius:3px}
+.dform textarea{min-height:80px;resize:vertical}
+.dform .btn{justify-self:start}
+.tod{background:var(--ink);color:#fff;padding:20px;border-radius:3px}
+.tod h3{font-size:1.2rem}
+.tod p{color:#B7C4CF;font-size:.92rem;margin:8px 0 14px}
+.tod .btn{background:var(--safety);border-color:var(--safety);color:var(--ink)}
+.tod .btn:hover{background:#fff;border-color:#fff}
+
+/* responsive */
+@media (max-width:1020px){
+  .lab{grid-template-columns:1fr}
+  .tool-list{display:flex;overflow-x:auto;border-right:0;border-bottom:1px solid #2A3846;max-height:none}
+  .tool-list li{flex:none}
+  .tool-list button{border-bottom:0;border-left:0;border-bottom:4px solid transparent;width:auto;min-width:150px}
+  .tool-list button[aria-pressed="true"]{border-bottom-color:var(--safety)}
+  .info{border-left:0;border-top:1px solid #2A3846;max-height:none}
+  .proj-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:820px){
+  section{padding:64px 0}
+  .hero-grid,.calc,.book-grid,.foot-grid{grid-template-columns:1fr}
+  .calc.on{display:grid}
+  .facts{grid-template-columns:repeat(2,1fr)}
+  .nav ul{display:none;position:absolute;top:64px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;gap:0;border-bottom:1px solid var(--line);padding:8px 24px 16px}
+  .nav ul.open{display:flex}
+  .nav ul a{display:block;padding:12px 0}
+  .menu-btn{display:block}
+  .faculty summary{grid-template-columns:48px 1fr 24px}
+  .faculty summary .fr,.faculty summary .fa{display:none}
+  .fdet{grid-template-columns:1fr;padding-left:4px}
+  .fdet div:first-child{grid-column:auto}
+  .notice{grid-template-columns:1fr;gap:4px}
+  .tag{justify-self:start}
+  .awards{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .proj-grid,.fields,.bk-fields{grid-template-columns:1fr}
+  .vbar label{margin-left:0}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+
+@media (max-width:1080px){
+  .nav ul{display:none;position:absolute;top:64px;left:0;right:0;background:var(--paper);flex-direction:column;align-items:stretch;gap:0;border-bottom:1px solid var(--line);padding:8px 24px 16px}
+  .nav ul.open{display:flex}
+  .nav ul a{display:block;padding:12px 0}
+  .nav ul a.btn,.nav ul a.chip-user{display:inline-block;padding:7px 14px}
+  .menu-btn{display:block}
+  .auth{padding-top:8px;flex-wrap:wrap}
+}
+@media (max-width:1020px){
+  .tool-col{border-right:0;max-height:none;border-bottom:1px solid #2A3846}
+  .tool-list{border-bottom:0}
+}
+@media (max-width:860px){
+  .login{grid-template-columns:1fr;min-height:0}
+  .login-side{padding:40px 24px}
+  .login-form{padding:40px 24px;max-width:none}
+  .dash-grid{grid-template-columns:1fr;gap:0}
+  .dash-head{flex-direction:column}
+}
+
+/* v3 additions */
+body.dark{--paper:#10171E;--paper-2:#17212B;--ink:#E8EDF1;--steel:#9FB0BE;--line:#2A3846}
+body.dark header.top{background:rgba(16,23,30,.92)}
+body.dark .btn{background:var(--ink);color:#10171E;border-color:var(--ink)}
+body.dark .btn.ghost{background:transparent;color:var(--ink)}
+body.dark .btn.ghost:hover{background:var(--ink);color:#10171E}
+body.dark .fields input,body.dark .fields select,body.dark .bk-fields input,body.dark .bk-fields select,body.dark .dform input,body.dark .dform textarea,body.dark .dform select,body.dark .login-form input,body.dark .mat-search{background:#0F171F;color:#E8EDF1}
+body.dark .proj,body.dark .mybook,body.dark .checks,body.dark .slot{background:var(--paper-2)}
+body.dark .out{background:#0B1117}
+body.dark .tod{background:#0B1117}
+body.dark .faculty summary:hover{background:var(--paper-2)}
+body.dark .nav ul{background:var(--paper)}
+.theme-btn{background:none;border:2px solid var(--ink);border-radius:3px;padding:5px 10px;cursor:pointer;font-weight:600;font-size:.85rem}
+.nav-right{display:flex;gap:10px;align-items:center}
+.login-quick{display:none;gap:8px}
+@media (max-width:1080px){.login-quick{display:flex}.login-quick .btn{padding:7px 14px;font-size:.85rem}.nav ul .auth[data-state="out"]{display:none}.brand span{display:none}}
+
+/* portal strip */
+.portal{padding:0 0 72px}
+.portal-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.portal a.big{display:block;padding:32px 28px;text-decoration:none;border-radius:4px;color:#fff;background:var(--blue);transition:transform .15s}
+.portal a.big.t{background:var(--night)}
+.portal a.big:hover{transform:translateY(-3px)}
+.portal a.big h3{font-size:1.6rem;margin-bottom:8px;color:#fff}
+.portal a.big p{color:rgba(255,255,255,.82);font-size:.95rem;max-width:42ch;margin-bottom:16px}
+.portal a.big span{font-weight:600;border-bottom:2px solid var(--safety)}
+.portal-note{margin-top:14px;font-size:.88rem;color:var(--steel)}
+@media (max-width:700px){.portal-grid{grid-template-columns:1fr}}
+
+/* tools grid on small screens: show all tools as tappable grid */
+.tool-count{margin:0 12px 8px;color:#8FA2B3;font-size:.82rem}
+@media (max-width:1020px){
+  .tool-list{display:grid;grid-template-columns:repeat(2,1fr);max-height:260px;overflow:auto}
+  .tool-list li{flex:none}
+  .tool-list button{min-width:0;border-bottom:1px solid #2A3846;border-left:4px solid transparent;width:100%}
+  .tool-list button[aria-pressed="true"]{border-bottom-color:#2A3846;border-left-color:var(--safety)}
+}
+
+/* academics + timetable + materials + quiz */
+.acc details{border-bottom:1px solid var(--line)}
+.acc summary{cursor:pointer;padding:16px 4px;font-weight:600;display:flex;justify-content:space-between;gap:12px;list-style:none}
+.acc summary::-webkit-details-marker{display:none}
+.acc summary:after{content:"+";font-size:1.3rem;transition:transform .2s}
+.acc details[open] summary:after{transform:rotate(45deg)}
+.acc ul{list-style:none;padding:0 4px 18px;display:grid;grid-template-columns:repeat(2,1fr);gap:6px 28px;font-size:.93rem}
+.acc li{border-bottom:1px dashed var(--line);padding:5px 0}
+.acc{border-top:2px solid var(--ink)}
+@media (max-width:640px){.acc ul{grid-template-columns:1fr}}
+.tt-wrap{overflow-x:auto}
+table.tt{border-collapse:collapse;width:100%;min-width:640px;font-size:.9rem}
+table.tt th,table.tt td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+table.tt th{background:var(--paper-2);font-family:var(--display);font-stretch:108%}
+table.tt td.now{background:#FFF1E4;outline:2px solid var(--safety);outline-offset:-2px}
+body.dark table.tt td.now{background:#2D1D12}
+.mat-search{padding:11px 14px;border:1px solid var(--steel);border-radius:3px;width:100%;max-width:420px;margin-bottom:18px;background:#fff}
+table.mat{border-collapse:collapse;width:100%;min-width:620px;font-size:.92rem}
+table.mat th,table.mat td{border-bottom:1px solid var(--line);padding:10px 8px;text-align:left}
+table.mat th{border-bottom:2px solid var(--ink)}
+table.mat td.n{font-family:var(--mono)}
+.quiz-box{max-width:720px}
+.q-q{font-size:1.2rem;font-weight:600;margin:10px 0 16px}
+.q-opts{display:grid;gap:10px}
+.q-opts button{text-align:left;padding:12px 16px;border:2px solid var(--ink);background:transparent;border-radius:3px;cursor:pointer}
+.q-opts button:hover:not(:disabled){background:var(--paper-2)}
+.q-opts button.right{background:var(--ok);border-color:var(--ok);color:#fff}
+.q-opts button.wrong{background:#B3261E;border-color:#B3261E;color:#fff}
+.q-meta{display:flex;justify-content:space-between;color:var(--steel);font-size:.9rem}
+.placements{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:2px solid var(--ink)}
+.placements div{padding:18px 16px 0 0}
+.placements b{display:block;font-family:var(--display);font-stretch:112%;font-size:1.5rem}
+.placements span{color:var(--steel);font-size:.9rem}
+@media (max-width:700px){.placements{grid-template-columns:repeat(2,1fr)}}
+.auth-tabs{display:flex;margin-bottom:18px;border-bottom:2px solid var(--ink)}
+.auth-tabs button{flex:1;padding:10px;background:none;border:0;cursor:pointer;font-weight:600;border-bottom:4px solid transparent;margin-bottom:-2px}
+.auth-tabs button[aria-selected="true"]{border-bottom-color:var(--safety)}
+.hint-line{font-size:.82rem;color:var(--steel)}
+.att-row{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);font-size:.93rem}
+.att-row .tg{display:flex;gap:6px}
+.att-row button{border:1px solid var(--steel);background:none;padding:3px 10px;border-radius:3px;cursor:pointer;font-size:.8rem}
+.att-row button.on{background:var(--ok);border-color:var(--ok);color:#fff}
+.att-row button.off.on{background:#B3261E;border-color:#B3261E}
+.bar{height:10px;background:var(--line);border-radius:5px;overflow:hidden;margin:6px 0 4px}
+.bar i{display:block;height:100%;background:var(--blue)}
+.todo-done{text-decoration:line-through;color:var(--steel)}
+/* v3 end */
+
+/* v4 pages */
+#workshop{background:var(--paper);color:var(--ink)}
+#workshop .lead{color:var(--steel)}
+#toolpage{background:var(--night);color:#E8EDF1;padding-top:36px}
+#toolpage h2{font-size:clamp(2rem,4vw,3rem);margin-bottom:22px;color:#fff}
+.crumb{font-size:.88rem;color:#8FA2B3;margin-bottom:14px}
+.crumb a{color:#C9D4DD}
+#toolpage .lab{grid-template-columns:1fr 340px}
+.cat-bar{display:grid;gap:14px;margin-bottom:26px}
+.tool-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.tcard{display:flex;flex-direction:column;gap:8px;padding:20px;border:1px solid var(--line);border-top:6px solid var(--blue);background:var(--paper);text-decoration:none;border-radius:2px;transition:transform .15s,box-shadow .15s}
+.tcard:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(16,24,32,.12)}
+.tcard .tc-cat{font-size:.78rem;color:var(--steel);font-weight:600}
+.tcard h3{font-size:1.2rem;font-stretch:105%}
+.tcard p{font-size:.9rem;color:var(--steel);flex:1}
+.tcard .tc-go{font-weight:600;font-size:.88rem;color:var(--blue)}
+body.dark .tcard{background:var(--paper-2)}
+.tdetail{display:grid;grid-template-columns:1fr 1fr;gap:30px 44px;margin-top:44px}
+.tblock h3{font-size:1.2rem;margin-bottom:10px;color:#fff}
+.tblock.wide{grid-column:1/-1}
+.tblock p{color:#C9D4DD;max-width:75ch}
+.tblock ul,.tblock ol{padding-left:20px;color:#C9D4DD;display:grid;gap:6px}
+.tblock details{border-bottom:1px solid #2A3846;padding:12px 0}
+.tblock summary{cursor:pointer;font-weight:600;color:#fff}
+.tblock details p{margin-top:8px}
+.rel{display:flex;flex-wrap:wrap;gap:8px}
+.rel a{padding:6px 14px;border:1px solid #365067;border-radius:99px;text-decoration:none;color:#E8EDF1;font-size:.9rem}
+.rel a:hover{background:#223445}
+.tnav{grid-column:1/-1;display:flex;justify-content:space-between;gap:12px;border-top:1px solid #2A3846;padding-top:18px;flex-wrap:wrap}
+.tnav a{color:#E8EDF1;text-decoration:none;font-weight:600}
+.tnav a:hover{color:var(--safety)}
+.tdetail .btn{background:var(--safety);border-color:var(--safety);color:var(--ink)}
+.features{padding:0 0 88px}
+.fgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:0 36px;border-top:2px solid var(--ink)}
+.fgrid a{display:block;padding:22px 0;border-bottom:1px solid var(--line);text-decoration:none}
+.fgrid a:hover h3{color:var(--blue)}
+.fgrid h3{font-size:1.2rem;margin-bottom:6px;font-stretch:105%}
+.fgrid p{color:var(--steel);font-size:.93rem}
+.contact-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:56px}
+.contact-grid form{display:grid;gap:12px}
+.contact-grid input,.contact-grid textarea{width:100%;padding:11px 12px;border:1px solid var(--steel);background:#fff;border-radius:3px}
+body.dark .contact-grid input,body.dark .contact-grid textarea{background:#0F171F;color:#E8EDF1}
+.sitemap{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;margin-bottom:36px}
+.sitemap a{display:block;color:#C9D4DD;text-decoration:none;padding:4px 0;font-size:.93rem}
+.sitemap a:hover{color:#fff;text-decoration:underline}
+.sitemap b{color:#fff;display:block;margin-bottom:6px}
+/* More dropdown */
+.nav ul .more{position:relative}
+.more-btn{background:none;border:0;font:inherit;font-size:.9rem;font-weight:500;cursor:pointer;padding:6px 0;border-bottom:2px solid transparent}
+.more-btn:hover{border-color:var(--blue)}
+.more-btn:after{content:" \25BE"}
+.nav ul.sub{display:none;position:absolute;top:100%;left:-12px;background:var(--paper);border:1px solid var(--line);padding:8px 16px;flex-direction:column;gap:2px;min-width:170px;z-index:60;box-shadow:0 8px 24px rgba(16,24,32,.12)}
+.more.open ul.sub{display:flex}
+@media (max-width:1080px){
+  .more-btn{display:none}
+  .nav ul.sub,.more.open ul.sub{display:flex;position:static;border:0;box-shadow:none;padding:0;min-width:0;background:none}
+  .nav ul .more{position:static}
+}
+@media (max-width:900px){
+  .tool-grid,.fgrid{grid-template-columns:repeat(2,1fr)}
+  .tdetail{grid-template-columns:1fr}
+  #toolpage .lab{grid-template-columns:1fr}
+}
+@media (max-width:700px){.contact-grid{grid-template-columns:1fr}.sitemap{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:560px){.tool-grid,.fgrid{grid-template-columns:1fr}}
+/* v4 end */
+.nav .brand{order:1}.nav ul{order:2}.nav-right{order:3}
+.more .sub a{text-align:left}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap nav">
+    <a class="brand" href="#/" aria-label="Mechanical Engineering home">
+      <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="18" fill="#101820"/><g fill="#F26B1D"><rect x="18" y="3" width="4" height="7" rx="1"/><rect x="18" y="30" width="4" height="7" rx="1"/><rect x="3" y="18" width="7" height="4" rx="1"/><rect x="30" y="18" width="7" height="4" rx="1"/></g><circle cx="20" cy="20" r="9" fill="#ECEEEF"/><circle cx="20" cy="20" r="3.5" fill="#101820"/></svg>
+      <div><b>Mechanical Engineering</b><span>Ridgeway Institute of Technology</span></div>
+    </a>
+    <div class="nav-right"><div class="login-quick" id="loginQuick"></div><button class="theme-btn" id="themeBtn" aria-label="Toggle dark mode">Dark</button><button class="menu-btn" id="menuBtn" aria-expanded="false" aria-controls="navList">Menu</button></div>
+    <ul id="navList">
+      <li><a href="#/workshop">Workshop</a></li>
+      <li><a href="#/faculty">Faculty</a></li>
+      <li><a href="#/academics">Academics</a></li>
+      <li><a href="#/students">Students</a></li>
+      <li><a href="#/calculators">Calculators</a></li>
+      <li><a href="#/booking">Book</a></li>
+      <li class="more"><button class="more-btn" type="button" aria-expanded="false">More</button><ul class="sub">
+        <li><a href="#/materials">Materials</a></li><li><a href="#/quiz">Quiz</a></li><li><a href="#/placements">Placements</a></li><li><a href="#/notices">Notices</a></li><li><a href="#/contact">Contact</a></li>
+      </ul></li>
+      <li id="authArea" class="auth"></li>
+    </ul>
+  </div>
+</header>
+
+<main id="top">
+<section class="hero" data-r="home">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <h1>Learn how machines work by making them.</h1>
+        <p class="lead">A four-year B.Tech programme where lectures meet a fully equipped workshop. Meet our teachers, see what students build, turn every workshop tool around in 3D, and book machine time online.</p>
+        <div class="cta">
+          <a class="btn" href="#/workshop">Explore the 3D workshop</a>
+          <a class="btn ghost" href="#/booking">Book a machine</a>
+          <a class="btn ghost" href="#/student-login">Student login</a>
+          <a class="btn ghost" href="#/teacher-login">Teacher login</a>
+        </div>
+      </div>
+      <div class="stage" id="heroStage">
+        <canvas id="heroCanvas" aria-label="Interactive 3D gear pair. Drag to rotate."></canvas>
+        <div class="cap"><span id="heroCap">Driver 20 teeth · Driven 45 teeth</span><span>Drag to turn</span></div>
+      </div>
+    </div>
+    <dl class="facts">
+      <div><dt>B.Tech + M.Tech</dt><dd>Four-year degree, two-year masters</dd></div>
+      <div><dt>1,200 students</dt><dd>Across four years and the PG programme</dd></div>
+      <div><dt>24 machines</dt><dd>Lathes, mills, CNC, welding and 3D printers</dd></div>
+      <div><dt>Mon to Sat, 9–6</dt><dd>Workshop open to booked students</dd></div>
+    </dl>
+  </div>
+</section>
+
+<section class="portal" id="portal" data-r="home">
+  <div class="wrap">
+    <div class="portal-grid">
+      <a class="big" href="#/student-login"><h3>Student portal</h3><p>See your timetable, assignments and attendance, book workshop machines and take quizzes.</p><span>Student login or guest</span></a>
+      <a class="big t" href="#/teacher-login"><h3>Teacher portal</h3><p>Post assignments and notices, mark attendance and approve machine bookings.</p><span>Teacher login or guest</span></a>
+    </div>
+    <p class="portal-note">New here? Open a portal and choose Sign up to create an account on this device, or continue as a guest.</p>
+  </div>
+</section>
+
+<section class="features" data-r="home">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Everything in one place</h2>
+      <p class="lead">Every feature has its own page. Pick one to start.</p>
+    </div>
+    <div class="fgrid">
+      <a href="#/workshop"><h3>Workshop in 3D</h3><p><span id="toolCount">30</span> tools to rotate, pull apart and study, each with full details.</p></a>
+      <a href="#/faculty"><h3>Faculty</h3><p>Your teachers, their courses and office hours.</p></a>
+      <a href="#/academics"><h3>Academics</h3><p>Syllabus by semester and the weekly timetable.</p></a>
+      <a href="#/students"><h3>Student projects</h3><p>What each year builds in the workshop.</p></a>
+      <a href="#/calculators"><h3>Calculators</h3><p>Gear train, beam strength and lathe speed.</p></a>
+      <a href="#/booking"><h3>Machine booking</h3><p>Reserve a slot after the safety checks.</p></a>
+      <a href="#/materials"><h3>Materials library</h3><p>Properties of common workshop materials.</p></a>
+      <a href="#/quiz"><h3>Quiz</h3><p>Ten questions on workshop and machine basics.</p></a>
+      <a href="#/notices"><h3>Notice board</h3><p>Exams, events and workshop notices.</p></a>
+      <a href="#/placements"><h3>Placements</h3><p>Where our graduates go after the degree.</p></a>
+      <a href="#/login"><h3>Student and teacher login</h3><p>Assignments, attendance, bookings and more.</p></a>
+      <a href="#/contact"><h3>Contact</h3><p>Questions about admissions or the workshop.</p></a>
+    </div>
+  </div>
+</section>
+
+<section class="portal" id="loginchoose" data-r="login" hidden>
+  <div class="wrap" style="padding-top:56px">
+    <div class="sec-head"><h2>Log in</h2><p class="lead">Choose your portal. You can log in, sign up, or continue as a guest.</p></div>
+    <div class="portal-grid">
+      <a class="big" href="#/student-login"><h3>Student portal</h3><p>Timetable, assignments, attendance, machine booking and quizzes.</p><span>Student login or guest</span></a>
+      <a class="big t" href="#/teacher-login"><h3>Teacher portal</h3><p>Post assignments and notices, mark attendance and approve bookings.</p><span>Teacher login or guest</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="workshop" data-r="workshop" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Workshop tools in 3D</h2>
+      <p class="lead">Open any tool for a rotatable 3D model, a pull-apart view, and full details: how it works, parts, uses, steps, safety and viva questions.</p>
+    </div>
+    <div class="cat-bar">
+      <input class="mat-search" id="wsSearch" placeholder="Search tools, for example lathe or gear" aria-label="Search tools" style="margin-bottom:0">
+      <div class="chips" id="wsChips" role="group" aria-label="Filter tools by category" style="margin-bottom:0"></div>
+    </div>
+    <div class="tool-grid" id="toolGrid"></div>
+  </div>
+</section>
+
+<section id="toolpage" data-r="tool" hidden>
+  <div class="wrap">
+    <nav class="crumb" aria-label="Breadcrumb"><a href="#/">Home</a> / <a href="#/workshop">Workshop</a> / <span id="tpCat"></span></nav>
+    <h2 id="tpName"></h2>
+    <div class="lab">
+      <div class="viewer" id="viewer">
+        <canvas id="toolCanvas" aria-label="Interactive 3D model of the selected workshop tool. Drag to rotate."></canvas>
+        <div class="hint">Drag to rotate</div>
+        <div class="vbar">
+          <button id="bSpin" aria-pressed="true">Run</button>
+          <button id="bAuto" aria-pressed="false">Auto-rotate</button>
+          <button id="bWire" aria-pressed="false">Wireframe</button>
+          <button id="bZin" aria-label="Zoom in">+</button>
+          <button id="bZout" aria-label="Zoom out">−</button>
+          <label>Pull apart <input type="range" id="explode" min="0" max="100" value="0"></label>
+        </div>
+      </div>
+      <aside class="info" id="info" aria-live="polite"></aside>
+    </div>
+    <div class="tdetail" id="tdetail"></div>
+  </div>
+</section>
+
+<section id="contactpage" data-r="contact" hidden>
+  <div class="wrap">
+    <div class="sec-head"><h2>Contact the department</h2><p class="lead">Ask about admissions, the workshop or a visit. We reply within two working days.</p></div>
+    <div class="contact-grid">
+      <form id="contactForm">
+        <input name="n" placeholder="Your name" required aria-label="Your name">
+        <input name="e" type="email" placeholder="Email address" required aria-label="Email address">
+        <textarea name="m" placeholder="How can we help?" required aria-label="Message" style="min-height:120px"></textarea>
+        <button class="btn" type="submit" style="justify-self:start">Send message</button>
+        <p id="cfMsg" class="msg" role="status"></p>
+      </form>
+      <address style="font-style:normal;line-height:1.9">
+        <b>Department of Mechanical Engineering</b><br>
+        Ridgeway Institute of Technology<br>
+        Block C, Engineering Campus<br><br>
+        Office: mech@ridgeway.example<br>
+        Phone: +00 000 000 0000<br>
+        Workshop: Mon to Sat, 9:00 to 18:00
+      </address>
+    </div>
+  </div>
+</section>
+
+<section id="faculty" data-r="faculty" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Your teachers</h2>
+      <p class="lead">Select a name to see courses, lab and office hours. Email is the fastest way to reach any of them.</p>
+    </div>
+    <div class="faculty" id="facultyList"></div>
+  </div>
+</section>
+
+<section id="students" data-r="students" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What students build</h2>
+      <p class="lead">Every year ends with a project that goes through the workshop. Filter by year to see what is realistic at your stage.</p>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filter projects by year">
+      <button class="chip" data-y="0" aria-pressed="true">All years</button>
+      <button class="chip" data-y="1" aria-pressed="false">First year</button>
+      <button class="chip" data-y="2" aria-pressed="false">Second year</button>
+      <button class="chip" data-y="3" aria-pressed="false">Third year</button>
+      <button class="chip" data-y="4" aria-pressed="false">Final year</button>
+    </div>
+    <div class="proj-grid" id="projGrid"></div>
+    <div class="awards">
+      <div><b>Baja SAE India, top 15</b><span>Team Ridgeway Racing, off-road vehicle built in our workshop</span></div>
+      <div><b>State Innovation Fair, 1st</b><span>Low-cost prosthetic hand by final-year students</span></div>
+      <div><b>12 students placed at core firms</b><span>Automotive, energy and manufacturing, last placement season</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="tools" data-r="tools" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Quick engineering calculators</h2>
+      <p class="lead">Check your homework or plan a job before it reaches the machine. Results update as you type.</p>
+    </div>
+    <div class="tabs" role="tablist">
+      <button role="tab" aria-selected="true" data-t="gear">Gear train</button>
+      <button role="tab" aria-selected="false" data-t="beam">Beam strength</button>
+      <button role="tab" aria-selected="false" data-t="lathe">Lathe speed</button>
+    </div>
+
+    <div class="calc on" id="calc-gear">
+      <div class="fields">
+        <label>Driver teeth<input type="number" id="g1" value="20" min="8" max="80"></label>
+        <label>Driven teeth<input type="number" id="g2" value="45" min="8" max="80"></label>
+        <label>Input speed (rpm)<input type="number" id="gn" value="1440"></label>
+        <label>Input torque (N·m)<input type="number" id="gt" value="10"></label>
+        <label class="full">Efficiency (%)<input type="number" id="ge" value="97" min="1" max="100"></label>
+      </div>
+      <div class="out">
+        <dl>
+          <div><dt>Gear ratio</dt><dd id="gr">–</dd></div>
+          <div><dt>Output speed</dt><dd id="gos">–</dd></div>
+          <div><dt>Output torque</dt><dd id="got">–</dd></div>
+          <div><dt>Type</dt><dd id="gty">–</dd></div>
+        </dl>
+        <button class="btn" id="gShow">Show this pair at the top of the page</button>
+      </div>
+    </div>
+
+    <div class="calc" id="calc-beam">
+      <div class="fields">
+        <label>Span length (mm)<input type="number" id="bL" value="1000"></label>
+        <label>Centre load (N)<input type="number" id="bP" value="500"></label>
+        <label>Width b (mm)<input type="number" id="bb" value="40"></label>
+        <label>Depth h (mm)<input type="number" id="bh" value="20"></label>
+        <label class="full">Material
+          <select id="bm">
+            <option value="200000|250">Mild steel (E 200 GPa, yield 250 MPa)</option>
+            <option value="69000|275">Aluminium 6061-T6 (E 69 GPa, yield 275 MPa)</option>
+            <option value="100000|200">Cast iron (E 100 GPa, yield 200 MPa)</option>
+            <option value="100000|200">Brass (E 100 GPa, yield 200 MPa)</option>
+          </select>
+        </label>
+      </div>
+      <div class="out">
+        <dl>
+          <div><dt>Second moment I</dt><dd id="bI">–</dd></div>
+          <div><dt>Max bending stress</dt><dd id="bS">–</dd></div>
+          <div><dt>Max deflection</dt><dd id="bD">–</dd></div>
+          <div><dt>Factor of safety</dt><dd id="bF">–</dd></div>
+        </dl>
+        <div class="verdict" id="bV"></div>
+      </div>
+    </div>
+
+    <div class="calc" id="calc-lathe">
+      <div class="fields">
+        <label>Work diameter (mm)<input type="number" id="lD" value="50"></label>
+        <label>Cut length (mm)<input type="number" id="lL" value="120"></label>
+        <label>Feed (mm/rev)<input type="number" id="lF" value="0.2" step="0.05"></label>
+        <label>Material (HSS tool)
+          <select id="lM">
+            <option value="28">Mild steel, 28 m/min</option>
+            <option value="90">Aluminium, 90 m/min</option>
+            <option value="60">Brass, 60 m/min</option>
+            <option value="20">Cast iron, 20 m/min</option>
+          </select>
+        </label>
+      </div>
+      <div class="out">
+        <dl>
+          <div><dt>Spindle speed</dt><dd id="lN">–</dd></div>
+          <div><dt>Cutting time per pass</dt><dd id="lT">–</dd></div>
+        </dl>
+        <div class="verdict" id="lV">Choose the nearest lower speed on the machine's gearbox.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="book" data-r="book" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Book a machine</h2>
+      <p class="lead">Tick the safety checks, pick a machine and a free slot. A supervisor will be present for every session.</p>
+    </div>
+    <div class="book-grid">
+      <div>
+        <p class="login-note" id="bkLogin">Please <a href="#/student-login">log in as a student</a> or <a href="#/teacher-login">as a teacher</a> to book a machine. Guest login works.</p>
+        <fieldset class="checks">
+          <legend>Before you book</legend>
+          <label><input type="checkbox" class="sc"> I will wear safety glasses and closed shoes.</label>
+          <label><input type="checkbox" class="sc"> I will tie back long hair and remove rings, watches and loose sleeves.</label>
+          <label><input type="checkbox" class="sc"> I know where the emergency stop and first-aid box are.</label>
+          <label><input type="checkbox" class="sc"> I will not run a machine without a supervisor present.</label>
+        </fieldset>
+        <div class="bk-fields">
+          <label>Your name<input id="bkName" placeholder="Full name" autocomplete="name"></label>
+          <label>Machine
+            <select id="bkMachine">
+              <option>Centre lathe</option><option>Milling machine</option><option>Drill press</option>
+              <option>3D printer (FDM)</option><option>CNC router</option><option>Welding bay</option>
+            </select>
+          </label>
+          <label>Date<input type="date" id="bkDate"></label>
+        </div>
+        <div class="slots" id="slots"></div>
+        <button class="btn" id="bkBtn" disabled>Confirm booking</button>
+        <p class="msg" id="bkMsg" role="status"></p>
+      </div>
+      <div class="mybook">
+        <h3>My bookings</h3>
+        <ul id="bkList"></ul>
+        <p class="empty" id="bkEmpty">No bookings yet. Your confirmed sessions will appear here.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="academics" data-r="academics" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>What you study</h2>
+      <p class="lead">Core subjects by semester. Open a semester to see its subjects, and find this week's class schedule below.</p>
+    </div>
+    <div class="acc" id="accList"></div>
+    <h3 style="margin:48px 0 14px;font-size:1.5rem">Weekly timetable, third year</h3>
+    <div class="tt-wrap"><table class="tt" id="ttTable"></table></div>
+  </div>
+</section>
+
+<section id="materials" data-r="materials" hidden style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Materials library</h2>
+      <p class="lead">Typical properties of common workshop materials. Search by name or type.</p>
+    </div>
+    <input class="mat-search" id="matSearch" placeholder="Search, for example steel or aluminium" aria-label="Search materials">
+    <div class="tt-wrap"><table class="mat" id="matTable"></table></div>
+  </div>
+</section>
+
+<section id="quiz" data-r="quiz" hidden>
+  <div class="wrap">
+    <div class="sec-head">
+      <h2>Test yourself</h2>
+      <p class="lead">Ten quick questions on workshop and machine basics. Your best score is saved on this device.</p>
+    </div>
+    <div class="quiz-box" id="quizBox"></div>
+  </div>
+</section>
+
+<section id="placements" data-r="placements" hidden style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head"><h2>After graduation</h2></div>
+    <div class="placements">
+      <div><b>86%</b><span>Placed or in higher studies, last batch</span></div>
+      <div><b>42</b><span>Companies visited campus</span></div>
+      <div><b>9 LPA</b><span>Highest package, last season</span></div>
+      <div><b>5</b><span>Alumni-founded start-ups</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="notices" data-r="notices" hidden>
+  <div class="wrap">
+    <div class="sec-head"><h2>Notice board</h2></div>
+    <div class="notice-list" id="noticeList"></div>
+  </div>
+</section>
+</main>
+
+<main id="view-login" hidden>
+  <div class="login student" id="loginBox">
+    <div class="login-side">
+      <a class="back" href="#/">Back to the department site</a>
+      <h2 id="lgSideH"></h2>
+      <ul id="lgSideList"></ul>
+    </div>
+    <div class="login-form">
+      <h1 id="lgH"></h1>
+      <p class="lead" id="lgSub"></p>
+      <div class="auth-tabs" role="tablist"><button type="button" role="tab" id="tabIn" aria-selected="true">Log in</button><button type="button" role="tab" id="tabUp" aria-selected="false">Sign up</button></div>
+      <form id="lgForm" novalidate>
+        <label id="lgNameRow" hidden>Full name<input id="lgFull" autocomplete="name"></label>
+        <label><span id="lgIdLbl"></span><input id="lgId" autocomplete="username"></label>
+        <label>Password<input id="lgPw" type="password" autocomplete="current-password" minlength="6"></label>
+        <label id="lgCodeRow" hidden>Faculty code<input id="lgCode" placeholder="Ask the department office"><span class="hint-line">Demo code: MECH-FAC-2026</span></label>
+        <button class="btn" type="submit" id="lgSubmit">Log in</button>
+      </form>
+      <p class="hint-line">Accounts are saved on this device only until a server is connected.</p>
+      <p class="msg warn" id="lgMsg" role="status"></p>
+      <div class="or">or</div>
+      <div class="guest-wrap">
+        <label>Your name (optional)<input id="lgName" placeholder="For example, Aman"></label>
+        <button class="btn guest" id="lgGuest" type="button"></button>
+      </div>
+      <a class="switch" id="lgSwitch" href="#/"></a>
+    </div>
+  </div>
+</main>
+
+<main id="view-dash" hidden></main>
+
+
+<footer id="sitefoot">
+  <div class="wrap">
+    <div class="sitemap">
+      <div><b>Learn</b><a href="#/academics">Academics</a><a href="#/materials">Materials library</a><a href="#/quiz">Quiz</a><a href="#/calculators">Calculators</a></div>
+      <div><b>Workshop</b><a href="#/workshop">3D tools</a><a href="#/booking">Book a machine</a><a href="#/notices">Notices</a></div>
+      <div><b>People</b><a href="#/faculty">Faculty</a><a href="#/students">Student projects</a><a href="#/placements">Placements</a></div>
+      <div><b>Portals</b><a href="#/student-login">Student login</a><a href="#/teacher-login">Teacher login</a><a href="#/contact">Contact</a></div>
+    </div>
+    <p class="copy" style="margin-top:0">© 2026 Department of Mechanical Engineering, Ridgeway Institute of Technology. Names, numbers and contact details are placeholders.</p>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+/* ============ DATA ============ */
+const FACULTY=[
+ {n:'Dr. Meera Raghavan',i:'MR',r:'Professor and Head of Department',a:'Thermal engineering, heat exchangers',c:'Thermodynamics, Heat Transfer, Refrigeration',l:'Thermal Lab',h:'Mon and Wed, 2 to 4 pm',e:'meera.r@ridgeway.example'},
+ {n:'Prof. Arjun Kulkarni',i:'AK',r:'Professor',a:'Machine design, finite element analysis',c:'Machine Design, Strength of Materials, FEA',l:'Design Studio',h:'Tue and Thu, 11 am to 1 pm',e:'arjun.k@ridgeway.example'},
+ {n:'Dr. Sana Iqbal',i:'SI',r:'Associate Professor',a:'Manufacturing, additive manufacturing',c:'Manufacturing Processes, 3D Printing, Metrology',l:'Additive Lab',h:'Mon and Fri, 10 am to 12 pm',e:'sana.i@ridgeway.example'},
+ {n:'Mr. Daniel Okafor',i:'DO',r:'Assistant Professor',a:'CAD/CAM, CNC programming',c:'Engineering Graphics, CAD/CAM, CNC',l:'CNC and CAD Lab',h:'Wed and Fri, 3 to 5 pm',e:'daniel.o@ridgeway.example'},
+ {n:'Dr. Priya Nambiar',i:'PN',r:'Assistant Professor',a:'Fluid mechanics, hydraulics',c:'Fluid Mechanics, Hydraulic Machines',l:'Fluids Lab',h:'Tue and Thu, 2 to 4 pm',e:'priya.n@ridgeway.example'},
+ {n:'Mr. Ravi Shetty',i:'RS',r:'Workshop Superintendent',a:'Machine shop, welding, shop safety',c:'Workshop Practice, safety induction',l:'Central Workshop',h:'Mon to Sat, 9 am to 6 pm',e:'workshop@ridgeway.example'}
+];
+const PROJECTS=[
+ {t:'Hand-crank winch',y:1,d:'A geared winch that lifts 20 kg, made from bar stock on the lathe and drill press.',g:'Team of 4',k:'Lathe, drill press'},
+ {t:'Desk bench vise clone',y:1,d:'Cast-style vise rebuilt from welded plate to learn tolerances and fits.',g:'Team of 3',k:'Welding, filing'},
+ {t:'Cam and follower rig',y:2,d:'Adjustable cam profiles to study follower motion, with a dial-gauge readout.',g:'Team of 4',k:'Milling, 3D printing'},
+ {t:'Mini wind tunnel',y:2,d:'Open-circuit tunnel with a smoke wand for visualising flow over aerofoils.',g:'Team of 5',k:'Sheet metal, 3D printing'},
+ {t:'CNC pen plotter',y:3,d:'Two-axis plotter that draws CAD sketches on paper using G-code.',g:'Team of 3',k:'CNC router, Arduino'},
+ {t:'Solar water heater test bed',y:3,d:'Compares flat-plate collector designs and records outlet temperature.',g:'Team of 4',k:'Welding, instrumentation'},
+ {t:'Off-road go-kart chassis',y:4,d:'Roll-cage chassis analysed in FEA, then welded and tested on campus.',g:'Team of 8',k:'Welding, FEA, lathe'},
+ {t:'Low-cost prosthetic hand',y:4,d:'Tendon-driven 3D-printed hand with five independent fingers.',g:'Team of 5',k:'3D printing, CAD'},
+ {t:'Hydraulic robotic arm',y:4,d:'Four-axis arm powered by syringe hydraulics for a classroom demonstration.',g:'Team of 4',k:'Milling, hydraulics'}
+];
+const YEAR=['','First year','Second year','Third year','Final year'];
+const NOTICES=[
+ {d:'12 Oct 2026',t:'Mid-semester exams timetable released',p:'Check the printed copy outside the department office.',g:'exam',gl:'Exam'},
+ {d:'18 Oct 2026',t:'Workshop safety induction for first-year batch B',p:'Attendance is compulsory before any machine booking is approved.',g:'lab',gl:'Workshop'},
+ {d:'24 Oct 2026',t:'Guest lecture: Additive manufacturing in aerospace',p:'Seminar hall, 11 am. Open to all years.',g:'event',gl:'Event'},
+ {d:'02 Nov 2026',t:'Baja team recruitment for the next season',p:'Bring your CAD or workshop portfolio, or just your enthusiasm.',g:'event',gl:'Event'},
+ {d:'09 Nov 2026',t:'Final-year project review 1',p:'Teams present problem statement and design to the panel.',g:'exam',gl:'Review'}
+];
+const TOOLS=[
+ {id:'lathe',n:'Centre lathe',c:'Turning machine',d:'Holds a workpiece in a rotating chuck while a fixed cutting tool on the carriage removes material. Used for shafts, pins, threads and tapers.',s:[['Swing over bed','300 mm'],['Between centres','750 mm'],['Spindle speeds','60 to 1800 rpm'],['Motor','2.2 kW']],w:'Never wear gloves or loose sleeves near the chuck, and remove the chuck key before starting.'},
+ {id:'gear',n:'Spur gear and shaft',c:'Power transmission',d:'Straight-cut teeth transfer rotation between parallel shafts. The ratio of teeth sets the speed and torque change.',s:[['Teeth','24'],['Module','2 mm'],['Pressure angle','20°'],['Material','EN8 steel']],w:'Keep guards in place on any gear train. Fingers can be drawn into the mesh in a fraction of a second.'},
+ {id:'bearing',n:'Deep-groove ball bearing',c:'Machine element',d:'Rolling balls between an inner and outer ring let a shaft spin with very little friction. Pull the model apart to see the ring, balls and race.',s:[['Series','6205'],['Bore','25 mm'],['Outer diameter','52 mm'],['Balls','8']],w:'Press bearings on by the ring that is being fitted. Never hammer on the opposite ring.'},
+ {id:'drill',n:'Twist drill bit',c:'Hole making',d:'Two spiral flutes carry chips out of the hole while the conical tip cuts. Speed and feed depend on diameter and material.',s:[['Point angle','118°'],['Material','HSS'],['Flutes','2'],['Shank','Straight']],w:'Clamp the work in a vise. Never hold it by hand, and clear chips with a brush, not your fingers.'},
+ {id:'caliper',n:'Vernier caliper',c:'Measuring instrument',d:'Measures outside, inside and depth dimensions. The sliding jaw and the vernier scale read to a fraction of a millimetre.',s:[['Range','0 to 150 mm'],['Least count','0.02 mm'],['Material','Hardened steel'],['Use','Inspection bench']],w:'Close the jaws gently and check zero before every measurement. Never use it on a spinning part.'},
+ {id:'bolt',n:'Hex bolt, washer and nut',c:'Fastener',d:'A bolted joint clamps plates together. The washer spreads the load, and the thread turns tightening torque into clamping force.',s:[['Size','M12 × 1.75'],['Grade','8.8'],['Head','Hex, 19 mm A/F'],['Tightening','About 70 N·m']],w:'Use a spanner that fits the head exactly. A loose fit rounds the corners and slips.'},
+ {id:'spanner',n:'Double ring spanner',c:'Hand tool',d:'Closed rings grip all six corners of a nut for high torque with low risk of slipping. Each end fits a different size.',s:[['Sizes','17 and 19 mm'],['Offset','15°'],['Material','Chrome vanadium'],['Length','240 mm']],w:'Pull the spanner toward you rather than pushing. If it slips, you will not hit your hand on the machine.'}
+];
+
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const mem={};
+const store={
+  get(k){try{const v=localStorage.getItem(k);return v===null?(mem[k]??null):JSON.parse(v)}catch(e){return mem[k]??null}},
+  set(k,v){mem[k]=v;try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+const getUser=()=>store.get('mech_user');
+const setUser=u=>store.set('mech_user',u);
+
+TOOLS.push(
+{id:'endmill',n:'End mill cutter',c:'Cutting tool',d:'A multi-flute cutter used on milling machines to cut slots, pockets and profiles. Four flutes give a smoother finish on steel than two.',s:[['Flutes','4'],['Diameter','12 mm'],['Material','HSS or carbide'],['Shank','Straight, 12 mm']],w:'Fit the cutter firmly in the collet, and never change it while the spindle is turning.'},
+{id:'piston',n:'Piston and crank mechanism',c:'Engine part',d:'Turns the up-and-down motion of a piston into rotation through the connecting rod and crank. Press Run and watch the piston travel.',s:[['Bore','70 mm'],['Stroke','70 mm'],['Rod length','3.1 × crank radius'],['Rings','2 compression']],w:'Keep hands clear of crank and rod when the engine can turn. Disconnect the spark plug lead before hand-turning it.'},
+{id:'vise',n:'Bench vise',c:'Hand tool',d:'Holds work firmly while you file, saw or drill. Turning the handle drives the moving jaw along the guide bar.',s:[['Jaw width','100 mm'],['Opening','120 mm'],['Body','Cast iron'],['Mounting','Bolted to bench']],w:'Tighten by hand pressure only. Never hammer the handle or slip a pipe over it.'},
+{id:'micrometer',n:'Outside micrometer',c:'Measuring instrument',d:'Measures small sizes very accurately. One full turn of the thimble moves the spindle 0.5 mm. Press Run to watch the spindle close.',s:[['Range','0 to 25 mm'],['Least count','0.01 mm'],['Frame','Hardened steel'],['Pitch','0.5 mm']],w:'Use the ratchet knob for the last turn so every reading has the same light pressure.'},
+{id:'hammer',n:'Ball-peen hammer',c:'Hand tool',d:'A flat face for striking and a rounded peen for shaping metal and setting rivets. Check the head is tight before use.',s:[['Head mass','450 g'],['Handle','Hickory wood'],['Face','Hardened steel'],['Length','320 mm']],w:'Wear safety glasses. Replace any hammer with a loose head or a cracked handle.'},
+{id:'spring',n:'Compression spring',c:'Machine element',d:'Stores energy when squeezed and pushes back when released. Press Run to watch it compress and extend.',s:[['Wire diameter','3 mm'],['Mean coil diameter','24 mm'],['Active coils','8'],['Material','Spring steel']],w:'A compressed spring releases energy suddenly. Use a proper compressor and keep your face clear.'},
+{id:'pulley',n:'V-belt pulley drive',c:'Power transmission',d:'Two grooved pulleys joined by a belt. The smaller pulley turns faster, and the speed ratio equals the ratio of the diameters.',s:[['Large pulley','260 mm'],['Small pulley','140 mm'],['Speed ratio','1.86 : 1'],['Belt','Section A']],w:'Keep the belt guard fitted. Never adjust belt tension while the machine is running.'},
+{id:'crankshaft',n:'Two-throw crankshaft',c:'Engine part',d:'Journals sit on the main axis while the crank pins are offset, so each pin travels in a circle and drives a connecting rod.',s:[['Throws','2, set 180° apart'],['Main journals','3'],['Material','Forged steel'],['Use','Reciprocating engines']],w:'Handle crankshafts with care. A nicked journal ruins a bearing.'},
+{id:'cam',n:'Cam and follower',c:'Machine element',d:'The cam profile decides how the follower moves. As the lobe turns it lifts the follower, then lets it drop. Press Run to see it.',s:[['Base circle','50 mm'],['Lift','22 mm'],['Follower','Flat face'],['Motion','Reciprocating']],w:'Keep fingers away from a moving cam and follower. They can pinch without warning.'},
+{id:'impeller',n:'Pump impeller',c:'Fluid machine',d:'Curved blades throw water outward as the impeller spins, which raises its pressure. Pull it apart to see the casing and inlet pipe.',s:[['Blades','6, backward curved'],['Diameter','140 mm'],['Speed','1450 rpm'],['Material','Cast bronze']],w:'Never run a pump dry. Switch off and isolate power before touching the casing.'},
+{id:'printer',n:'3D printer (FDM)',c:'Machine tool',d:'Melts plastic filament and lays it down layer by layer. In this model the print head moves side to side while the bed moves front to back.',s:[['Build volume','220 × 220 × 250 mm'],['Nozzle','0.4 mm'],['Hot end','Up to 260 °C'],['Material','PLA, PETG']],w:'The nozzle and bed are hot. Let them cool before removing a print.'},
+{id:'grinder',n:'Bench grinder',c:'Machine tool',d:'Two abrasive wheels for sharpening tools and removing burrs. Wheel guards and tool rests must always be set correctly.',s:[['Wheel','150 mm'],['Speed','2950 rpm'],['Motor','370 W'],['Tool rest gap','2 mm maximum']],w:'Wear a face shield. Stand to the side when switching on, and never use a cracked wheel.'}
+);
+const CATMAP={lathe:'Machine tools',grinder:'Machine tools',printer:'Machine tools',drill:'Cutting tools',endmill:'Cutting tools',spanner:'Hand tools',hammer:'Hand tools',vise:'Hand tools',caliper:'Measuring',micrometer:'Measuring',gear:'Machine elements',bearing:'Machine elements',bolt:'Machine elements',spring:'Machine elements',pulley:'Machine elements',cam:'Machine elements',piston:'Engines and fluids',crankshaft:'Engines and fluids',impeller:'Engines and fluids'};
+
+TOOLS.push(
+{id:'drillpress',n:'Pillar drill press',c:'Machine tool',d:'A column-mounted drill with a table and a feed handle. Lowering the handle pushes the spinning bit into the clamped work. Press Run to see the spindle turn.',s:[['Capacity','16 mm in steel'],['Speeds','240 to 2800 rpm'],['Motor','0.75 kW'],['Table','Tilting, 300 mm']],w:'Clamp the work, remove the chuck key, and tie back hair. Never hold a part by hand while drilling.'},
+{id:'mill',n:'Vertical milling machine',c:'Machine tool',d:'A rotating cutter on a vertical spindle cuts a workpiece clamped on a moving table. The table moves in X and Y, the head in Z. Press Run to see the table traverse.',s:[['Table','800 × 240 mm'],['Spindle','Up to 4000 rpm'],['Travel X/Y/Z','500/200/350 mm'],['Motor','2.2 kW']],w:'Use guards and chip shields. Never brush chips away by hand or measure work while the spindle is turning.'},
+{id:'worm',n:'Worm and worm wheel',c:'Power transmission',d:'A screw-like worm drives a toothed wheel at a high reduction in a compact space. One turn of a single-start worm advances the wheel by one tooth.',s:[['Starts','1'],['Wheel teeth','30'],['Ratio','30 : 1'],['Self-locking','Usually yes']],w:'Worm drives run warm. Check the oil level and never touch the housing right after a long run.'},
+{id:'rack',n:'Rack and pinion',c:'Power transmission',d:'Converts rotation to straight-line motion. The pinion turns and the rack slides. This is how a lathe carriage or a steering gear moves.',s:[['Module','2 mm'],['Pinion teeth','18'],['Travel per turn','113 mm'],['Material','Steel']],w:'Keep fingers away from the mesh point and keep guides lubricated.'},
+{id:'chain',n:'Chain and sprocket drive',c:'Power transmission',d:'A roller chain wraps two toothed sprockets. It transmits power without slipping, unlike a belt. Speed ratio is the ratio of the tooth counts.',s:[['Pitch','12.7 mm'],['Driver teeth','12'],['Driven teeth','24'],['Ratio','2 : 1']],w:'Never adjust or oil a chain while it moves. Keep the chain guard fitted.'},
+{id:'ujoint',n:'Universal joint',c:'Machine element',d:'Connects two shafts whose axes meet at an angle. A cross-shaped spider sits in two yokes. Used in vehicle propeller shafts.',s:[['Max angle','About 30°'],['Parts','2 yokes, 1 cross'],['Material','Forged steel'],['Use','Drive shafts']],w:'Grease the cross bearings and keep guards in place on exposed shafts.'},
+{id:'fourbar',n:'Four-bar linkage',c:'Mechanism',d:'Four rigid links joined by pins. When the crank turns, the rocker swings back and forth. A basic mechanism in kinematics, found in wipers and presses.',s:[['Links','4'],['Joints','4 revolute'],['Type','Crank-rocker'],['Degrees of freedom','1']],w:'Pinch points exist at every joint. Keep fingers clear while the mechanism moves.'},
+{id:'jack',n:'Hydraulic bottle jack',c:'Fluid machine',d:'A small pump piston pushes oil under a large ram. Pascal\'s law multiplies the force by the ratio of the two areas. Pull apart to see the ram and the cylinder.',s:[['Capacity','5 tonne'],['Lift','150 mm'],['Fluid','Hydraulic oil'],['Area ratio','About 50 : 1']],w:'Never go under a load held only by a jack. Use axle stands, and never exceed the rated capacity.'},
+{id:'pipewrench',n:'Pipe wrench',c:'Hand tool',d:'An adjustable wrench with serrated jaws that bite into round pipe. The hook jaw grips tighter as you pull the handle.',s:[['Length','350 mm'],['Jaw capacity','50 mm'],['Material','Forged steel'],['Use','Pipes, fittings']],w:'Pull the handle toward you with the jaw set on the correct side. Do not use it on hex nuts, since it damages them.'},
+{id:'torch',n:'Gas welding torch',c:'Welding',d:'Mixes oxygen and acetylene to give a flame hot enough to melt steel. The two hoses meet at the mixing chamber and flow out through the nozzle.',s:[['Fuel','Acetylene'],['Oxidiser','Oxygen'],['Flame','About 3100 °C'],['Tip size','No. 3']],w:'Wear a shade 5 filter goggle and keep cylinders upright and chained. Check hoses for leaks with soapy water, never a flame.'},
+{id:'flywheel',n:'Flywheel and clutch plate',c:'Engine part',d:'A heavy rim stores rotational energy and smooths out the power pulses of an engine. The clutch plate presses against it to connect or disconnect the drive.',s:[['Diameter','300 mm'],['Mass','8 kg'],['Material','Cast iron'],['Friction lining','Organic']],w:'A spinning flywheel stores a lot of energy. Never open guards or reach near it while it is turning.'}
+);
+Object.assign(CATMAP,{drillpress:'Machine tools',mill:'Machine tools',worm:'Machine elements',rack:'Machine elements',chain:'Machine elements',ujoint:'Machine elements',fourbar:'Mechanisms',jack:'Engines and fluids',pipewrench:'Hand tools',torch:'Welding',flywheel:'Engines and fluids'});
+TOOLS.forEach(t=>t.cat=CATMAP[t.id]);
+
+
+const SEMS=[
+ ['Semester 1 and 2',['Engineering Mathematics I and II','Engineering Physics','Engineering Chemistry','Basic Electrical Engineering','Engineering Graphics','Workshop Practice','Programming for Engineers','Engineering Mechanics']],
+ ['Semester 3 and 4',['Strength of Materials','Thermodynamics','Fluid Mechanics','Manufacturing Processes','Kinematics of Machinery','Material Science','Machine Drawing and CAD','Metrology and Measurements']],
+ ['Semester 5 and 6',['Heat and Mass Transfer','Design of Machine Elements','Dynamics of Machinery','Hydraulic Machines','IC Engines','CAD/CAM and CNC','Industrial Engineering','Mechatronics']],
+ ['Semester 7 and 8',['Finite Element Analysis','Refrigeration and Air Conditioning','Additive Manufacturing','Robotics','Elective I and II','Industrial Training','Final Year Project','Professional Ethics']]
+];
+const TT_DAYS=['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+const TT_SLOTS=['9:00','10:00','11:15','12:15','14:00','15:00'];
+const TT=[
+ ['Heat Transfer','Machine Design','Break','Dynamics','Workshop','Workshop'],
+ ['Machine Design','Heat Transfer','Break','CAD/CAM Lab','CAD/CAM Lab','Industrial Eng.'],
+ ['Dynamics','Hydraulic Machines','Break','Heat Transfer','Thermal Lab','Thermal Lab'],
+ ['Hydraulic Machines','IC Engines','Break','Machine Design','Seminar','Library'],
+ ['IC Engines','Dynamics','Break','Industrial Eng.','Fluids Lab','Fluids Lab'],
+ ['Project work','Project work','Break','Mentoring','Sports','Free']
+];
+const MATS=[
+ ['Mild steel (1018)','Ferrous',7850,205,370,440,'Shafts, general fabrication'],
+ ['Medium carbon steel (EN8)','Ferrous',7850,205,465,700,'Gears, axles, bolts'],
+ ['Stainless steel 304','Ferrous',8000,193,215,505,'Food and chemical equipment'],
+ ['Cast iron (grey)','Ferrous',7200,100,130,220,'Machine beds, housings'],
+ ['Aluminium 6061-T6','Non-ferrous',2700,69,275,310,'Frames, aircraft parts'],
+ ['Aluminium 7075-T6','Non-ferrous',2810,72,503,572,'Aircraft structures'],
+ ['Brass (C36000)','Non-ferrous',8500,100,125,340,'Fittings, bushes'],
+ ['Phosphor bronze','Non-ferrous',8800,110,200,350,'Bearings, gears'],
+ ['Copper','Non-ferrous',8960,117,70,220,'Wires, heat exchangers'],
+ ['Titanium Ti-6Al-4V','Non-ferrous',4430,114,880,950,'Aerospace, implants'],
+ ['Nylon 6','Polymer',1140,2.8,70,80,'Gears, bushings'],
+ ['ABS','Polymer',1050,2.3,40,45,'3D printing, housings'],
+ ['PLA','Polymer',1240,3.5,50,60,'3D printing prototypes']
+];
+const QUIZ=[
+ ['Which machine is used to produce cylindrical parts by turning?',['Shaper','Lathe','Planer','Broach'],1],
+ ['What does a vernier caliper with a 0.02 mm least count measure to?',['0.2 mm','0.02 mm','0.002 mm','2 mm'],1],
+ ['A gear with 20 teeth drives a gear with 40 teeth. The output speed is:',['Half the input','Same','Double','Four times'],0],
+ ['Which safety item must you wear at a grinder?',['Gloves','Face shield or goggles','Tie','Sandals'],1],
+ ['Pascal\'s law is used in which tool?',['Vernier caliper','Hydraulic jack','Lathe chuck','Spanner'],1],
+ ['The SI unit of torque is:',['N','N·m','Pa','W'],1],
+ ['Which cutting tool has two helical flutes and a conical point?',['End mill','Twist drill','Reamer','Tap'],1],
+ ['Which of these is a speed reducer?',['Small driver, large driven gear','Large driver, small driven gear','Equal gears','Idler gear only'],0],
+ ['Young\'s modulus measures a material\'s:',['Hardness','Stiffness','Toughness','Density'],1],
+ ['Which process joins metals by melting them with a flame or arc?',['Casting','Forging','Welding','Rolling'],2]
+];
+
+const TOOL_DETAILS={
+lathe:{how:"The workpiece is held in the chuck and rotated by the spindle. A single-point cutting tool on the carriage is fed along or across the work and removes material in thin layers. The lead screw moves the carriage at a fixed rate for cutting threads.",parts:["Bed: the rigid base that carries everything","Headstock: houses the spindle and gearbox","Chuck: grips the workpiece","Carriage: slides along the bed and carries the tool post","Tailstock: supports long work with a centre, or holds a drill","Lead screw: drives the carriage for threading"],uses:["Turning shafts and pins to size","Facing, taper turning and boring","Cutting threads and knurling"],steps:["Check guards, then fit and tighten the work in the chuck","Set the tool at centre height and lock the tool post","Choose the spindle speed (see the Lathe speed calculator)","Take a light trial cut, measure, then continue in passes"],care:"Wipe chips off the bed after use and oil the ways daily. Check the gearbox oil level weekly.",viva:[["What is the use of the tailstock?","It supports long workpieces at the free end with a centre, or holds a drill or reamer for axial holes."],["What decides the spindle speed?","The cutting speed of the material and tool, and the work diameter: N = 1000 V / (pi D)."]]},
+gear:{how:"Teeth on one gear mesh with teeth on another, so rotation passes from shaft to shaft without slipping. A key sits in a keyway and locks the gear to its shaft. The ratio of teeth sets the change in speed and torque.",parts:["Gear body with involute teeth","Shaft that carries the gear","Key that locks gear to shaft","Collar that holds the gear in position","Hub bore, machined to fit the shaft"],uses:["Gearboxes and lathe headstocks","Clocks and instruments","Machine feed drives"],steps:["Check the shaft and bore for burrs","Fit the key in the shaft keyway","Slide the gear on and secure it with the collar","Check backlash when meshed"],care:"Keep teeth clean and lightly lubricated. Look for pitting or chipped teeth during inspection.",viva:[["What is the module of a gear?","Pitch circle diameter divided by number of teeth, in millimetres."],["Why is the pressure angle usually 20 degrees?","It gives strong teeth and smooth transmission with little undercut."]]},
+bearing:{how:"Hardened balls roll between two grooved rings. Rolling friction is far lower than sliding friction, so the shaft turns easily and wears little. The cage keeps the balls evenly spaced.",parts:["Outer ring","Inner ring","Rolling balls","Cage that spaces the balls","Seals or shields that keep dirt out"],uses:["Electric motors and fans","Wheels and gearboxes","Lathe spindles"],steps:["Clean the shaft and housing","Press the bearing on by the inner ring, or heat it gently","Seat it against the shoulder","Grease it and fit the seals or cover"],care:"Re-grease on schedule. Rumbling noise or heat signals wear, and the bearing should be replaced.",viva:[["What does 6205 mean?","6 is deep groove, 2 is the light series, and 05 means a 25 mm bore (05 times 5)."],["Why are the balls hardened?","To resist the high contact stress when rolling under load."]]},
+drill:{how:"The two cutting lips at the tip shear the metal while the helical flutes carry chips up and out of the hole. The web at the centre pushes material aside. Speed and feed depend on the drill diameter and the material.",parts:["Point with two cutting lips","Flutes that clear chips","Web at the centre","Body","Shank that fits the chuck"],uses:["Making holes before tapping or reaming","Clearance holes for bolts","Centre drilling in the lathe"],steps:["Centre-punch the hole position","Clamp the work firmly","Set a suitable speed and start with light feed","Withdraw often to clear chips and add coolant"],care:"Sharpen to 118 degrees with equal lip lengths. A blunt or uneven drill makes oversize holes.",viva:[["What is the standard point angle?","118 degrees for general work in steel."],["Why does a drill get hot?","Friction and shearing generate heat, and the chips can carry it away only if the flutes stay clear."]]},
+caliper:{how:"The fixed jaw sits on the main beam and the moving jaw slides along it. Read whole millimetres from the main scale, then add the fraction from the vernier line that lines up exactly with a main-scale line. Reading = main scale + (aligned vernier line x least count).",parts:["Main beam with scale","Fixed jaw","Sliding jaw","Vernier scale","Locking screw","Depth rod"],uses:["Outside diameters","Inside bores with the small jaws","Depths and step heights"],steps:["Close the jaws and check the zero","Place the jaws gently on the work","Lock the screw and read the scale","Repeat in two places and take the average"],care:"Wipe after use and store with the jaws slightly open in its box. Never drop it.",viva:[["How do you find the least count?","Smallest main-scale division divided by the number of vernier divisions, for example 1 mm / 50 = 0.02 mm."],["What is zero error?","The reading when the jaws are closed, if it is not zero. Subtract it from every reading."]]},
+bolt:{how:"Tightening the nut stretches the bolt slightly. That stretch pulls the plates together with a clamping force, and friction holds them against sliding. The washer spreads the load over a wider area.",parts:["Head","Shank","Thread","Washer","Nut"],uses:["Machine frames and bases","Flange joints on pipes","Engine and vehicle assemblies"],steps:["Align the holes and insert the bolt","Fit the washer and start the nut by hand","Tighten in a cross pattern if there are several bolts","Finish with a torque wrench to the specified value"],care:"Check torque after the first hours of use. Replace bolts that are stretched, rusted or have damaged threads.",viva:[["What does M12 x 1.75 mean?","Metric thread, 12 mm nominal diameter, 1.75 mm pitch."],["What does grade 8.8 mean?","Minimum tensile strength about 800 MPa, and yield about 80 percent of that."]]},
+spanner:{how:"The ring surrounds all six corners of the nut, so the force spreads evenly and the tool is unlikely to slip. The 15 degree offset lets you turn a nut in a tight space by flipping the spanner over.",parts:["Large ring head","Small ring head","Handle","12-point hex opening"],uses:["Tightening bolts and nuts","Machine assembly and servicing","Vehicle maintenance"],steps:["Pick the exact size","Seat the ring fully on the nut","Pull the handle toward you","Finish with a torque wrench where torque matters"],care:"Wipe off oil and store spanners in size order. Discard any with cracked or spread rings.",viva:[["Why ring spanners for high torque?","A ring grips all the corners, so it does not spread or slip."],["What does A/F mean?","Across flats: the distance between two opposite flat sides of the nut."]]},
+endmill:{how:"The cutter spins at high speed while the table feeds the work against it. Each flute edge takes a small chip. The sides cut slots and walls, and the end teeth cut pockets and plunge into the work.",parts:["Cutting flutes","End teeth","Core","Shank held in a collet"],uses:["Cutting slots and keyways","Machining pockets and profiles","Surface finishing"],steps:["Select the cutter for the material and depth","Grip it in a collet with short overhang","Set speed and feed from the chart","Take light cuts with coolant"],care:"Clean the collet and cutter. Re-sharpen or replace when you see rubbing and a poor finish.",viva:[["Why do more flutes suit steel?","More flutes give a smoother finish with less load per tooth, but leave less room for chips."],["What is climb milling?","The cutter rotates in the direction of feed. It gives a better finish but needs a table with no backlash."]]},
+piston:{how:"Pressure from burning fuel pushes the piston down. The connecting rod turns that straight motion into rotation of the crank. Piston rings seal the gap against the cylinder wall.",parts:["Piston with rings","Gudgeon (wrist) pin","Connecting rod","Crank pin and crank","Cylinder liner"],uses:["Petrol and diesel engines","Compressors","Reciprocating pumps"],steps:["Press Run to see the stroke","Watch the piston reach top and bottom dead centre","Notice the rod swinging from side to side","Pull apart to see each part"],care:"Check ring gap and piston clearance when overhauling an engine. Use the correct oil grade.",viva:[["What is stroke?","The distance the piston travels between top and bottom dead centre, equal to twice the crank radius."],["What do piston rings do?","They seal the combustion gases, control oil, and carry heat to the cylinder wall."]]},
+vise:{how:"Turning the handle turns a screw that pulls the moving jaw toward the fixed jaw and grips the work. The guide bar keeps the jaws parallel.",parts:["Fixed jaw","Moving jaw","Jaw plates","Screw and handle","Guide bar","Base"],uses:["Holding work for filing and sawing","Holding small parts for hand drilling","Light bending and assembly"],steps:["Open the jaws wider than the work","Place the work low and square","Tighten by hand","Release after finishing and wipe the jaws"],care:"Oil the screw and slide. Replace worn jaw plates, and use soft jaws on finished surfaces.",viva:[["Why are jaw plates serrated?","The serrations bite into the work and prevent slipping."],["How do you protect a finished surface?","Use soft jaw covers made of aluminium, copper or fibre."]]},
+micrometer:{how:"A precise screw with a 0.5 mm pitch is turned by the thimble. One full turn moves the spindle 0.5 mm, and the thimble has 50 divisions, so each division is 0.01 mm. Read the sleeve first, then the thimble.",parts:["Frame","Anvil","Spindle","Sleeve with main scale","Thimble","Ratchet stop","Lock"],uses:["Shaft diameters","Sheet thickness","Inspection of finished parts"],steps:["Clean the faces and check the zero","Close on the work using the ratchet","Read the sleeve, then the thimble","Add the two readings and note the units"],care:"Keep it in its case with the faces slightly apart. Never over-tighten.",viva:[["What is the least count?","0.5 mm divided by 50 = 0.01 mm."],["Why use the ratchet?","It gives the same measuring force every time."]]},
+hammer:{how:"The weight of the head and the speed of the swing deliver the blow. The flat face drives punches and chisels, while the ball end spreads metal, as when closing a rivet.",parts:["Head, hardened steel","Flat face","Ball peen","Eye and wedge","Handle"],uses:["Striking punches and chisels","Setting rivets","Shaping and straightening sheet metal"],steps:["Check the wedge and handle for tightness","Hold near the end of the handle","Swing from the elbow and strike squarely","Store it with the head down"],care:"Dress mushroomed edges on a grinder and replace split handles. Keep the face free of oil.",viva:[["Why is the ball end used for riveting?","Its rounded shape spreads the rivet tail evenly into a neat head."],["Why must the face strike squarely?","A glancing blow can slip, chip the face or injure the user."]]},
+spring:{how:"A compression spring stores energy as the coil wire twists slightly along its length. The load and the deflection are proportional, so F = k x, where k is the spring rate. When the load goes, the coils spring back.",parts:["Coil wire","End coils, ground flat","Seat plates","Guide rod"],uses:["Vehicle suspension","Valves and clutches","Pens, locks and press tools"],steps:["Measure the free length","Fit it on a guide so it cannot buckle","Compress it through its working range only","Never compress it fully solid"],care:"Check for cracks and corrosion. Replace springs that have lost free length.",viva:[["What is spring rate?","The force needed per unit deflection, in N/mm. For a coil spring k = G d^4 / (8 D^3 n)."],["Why use a guide rod?","It prevents sideways buckling of a long spring."]]},
+pulley:{how:"The belt wedges into the V-groove and grips by friction, so the driven pulley turns with the driver. The speed ratio equals the driver diameter divided by the driven diameter, apart from a small slip.",parts:["Large pulley","Small pulley","V-belt","Shafts","Keys"],uses:["Motor to lathe or drill press","Fans and compressors","Conveyors"],steps:["Align the pulleys with a straight edge","Fit the belt without forcing it","Tension it until it deflects about 10 mm under thumb pressure","Refit the guard"],care:"Check for cracks and glazing. Replace belts in matched sets.",viva:[["Why do V-belts grip better than flat belts?","The wedge action multiplies the normal force on the groove walls."],["What is belt slip?","A small loss of speed because the belt creeps on the pulley under load."]]},
+crankshaft:{how:"The main journals sit in the engine bearings along the axis of the shaft. The offset crank pins carry the connecting rods, so each rod's push becomes a turning force on the shaft. Webs join pins to journals, and counterweights balance the motion.",parts:["Main journals","Crank pins","Webs","Counterweights or flywheel flange","Oil passages"],uses:["Piston engines","Reciprocating compressors","Pumps"],steps:["Press Run to spin the crankshaft","Note the two pins set 180 degrees apart","Pull apart to see each section","Compare journals and pins"],care:"Measure journal wear with a micrometer at overhaul. Regrind to the next undersize if scored.",viva:[["Why are crank pins set at angles?","To space out the power strokes and balance the forces."],["What is a counterweight for?","It balances the rotating and reciprocating masses to cut vibration."]]},
+cam:{how:"The cam turns at a steady speed and its shape pushes the follower up, then lets it fall. The profile fixes when and how far the follower moves, which is how engine valves open at the right time.",parts:["Cam lobe","Follower","Guide","Camshaft","Base circle"],uses:["Engine valves","Automatic machines","Textile and packing machinery"],steps:["Press Run to turn the cam","Watch the follower rise and fall","Note the dwell on the base circle","Pull apart to see the guide and follower"],care:"Lubricate the contact surface, and check cam and follower for pitting.",viva:[["What is the base circle?","The smallest circle drawn from the cam centre that is tangent to the profile."],["What is lift?","The maximum travel of the follower from its lowest position."]]},
+impeller:{how:"Fluid enters at the centre. The spinning blades throw it outward by centrifugal force, raising its speed and then its pressure in the casing. Backward-curved blades give stable, efficient flow.",parts:["Blades","Back plate","Hub","Casing (volute)","Inlet pipe"],uses:["Water supply pumps","Cooling circuits","Process plants"],steps:["Fill the casing and suction line with water (priming)","Start with the delivery valve almost closed","Open the valve slowly to the working flow","Listen for cavitation noise"],care:"Check the shaft seal for leaks and the impeller for erosion.",viva:[["What is priming?","Filling the pump and suction pipe with liquid so it can pump without air."],["What is cavitation?","Vapour bubbles forming at low pressure and collapsing, which damages the impeller."]]},
+printer:{how:"A heated nozzle melts plastic filament and draws a thin line of it. The head moves in X, the bed moves in Y, and the Z axis steps up each layer, building the part from slices of the CAD model.",parts:["Frame","Print head and nozzle","Heated bed","Filament spool","Stepper motors and rails"],uses:["Prototypes and jigs","Custom brackets","Teaching models"],steps:["Level the bed and load the filament","Slice the model and set the layer height","Start the print and watch the first layer","Let the bed cool, then remove the part"],care:"Clean the nozzle and bed, and keep the filament dry.",viva:[["What is layer height?","The thickness of each deposited layer, commonly 0.1 to 0.3 mm."],["Why does the first layer matter?","If it does not stick well, the whole part can detach and fail."]]},
+grinder:{how:"A motor spins two abrasive wheels at high speed. Many tiny hard grains on the wheel each cut a small chip, which sharpens tools and removes burrs.",parts:["Motor","Grinding wheels","Wheel guards","Tool rests","Eye shields"],uses:["Sharpening chisels and drills","Removing burrs and rust","Shaping small parts"],steps:["Check the wheel for cracks with a ring test","Set the tool rest within 2 mm of the wheel","Stand to the side and let the wheel reach speed","Grind with light pressure"],care:"Dress glazed wheels. Replace a wheel that is worn down to its flange.",viva:[["What is wheel dressing?","Removing dull grains and clogging to expose fresh sharp abrasive."],["Why stand to the side at start-up?","A faulty wheel can burst, and the debris flies in line with the wheel."]]},
+drillpress:{how:"The motor drives the spindle through a belt and pulley set. Pulling the feed handle lowers the spindle so the bit cuts straight down at right angles to the table, which is more accurate than hand drilling.",parts:["Base and column","Table","Head and motor","Spindle and chuck","Feed handle"],uses:["Accurate holes","Counterboring and countersinking","Reaming and tapping"],steps:["Set the belt for the right speed","Clamp the work to the table","Lower the bit with light pressure","Withdraw to clear chips on deep holes"],care:"Oil the column, check belt tension, and keep the table clean.",viva:[["Why use a lower speed for larger drills?","Cutting speed at the rim is proportional to rpm times diameter, so large drills need lower rpm."],["Why clamp the work?","A catching drill can spin the work and cause injury."]]},
+mill:{how:"A rotating cutter in the vertical spindle removes material as the clamped work moves under it. The table moves in X and Y, and the head or knee sets the depth in Z, so flat faces, slots and pockets can be cut accurately.",parts:["Column and base","Spindle and cutter","Table","Saddle and knee","Hand wheels"],uses:["Facing and squaring blocks","Cutting slots and pockets","Drilling and boring to position"],steps:["Clamp the work in a vise","Set the spindle speed for the cutter and material","Touch the cutter on the surface and zero the dial","Take cuts in several light passes"],care:"Clean chips off the table and slides, then oil the ways daily.",viva:[["What is the difference between climb and conventional milling?","In climb milling the cutter turns with the feed. In conventional milling it turns against it."],["Why zero the dial at the surface?","So depth settings are measured from a known reference."]]},
+worm:{how:"The worm acts like a screw that pushes the wheel teeth sideways. One full turn of a single-start worm moves the wheel by one tooth, so with a 30-tooth wheel the ratio is 30 to 1. The gearing usually cannot be driven backwards.",parts:["Worm","Worm wheel","Shafts at 90 degrees","Housing and oil"],uses:["Lifts and hoists","Steering gears","Conveyors and indexing heads"],steps:["Press Run","Note the worm turns far faster than the wheel","See the shafts cross at a right angle","Pull apart to see how they mesh"],care:"Use the correct gear oil. Worm gearing runs warm, so check for overheating.",viva:[["How do you find the ratio?","Number of wheel teeth divided by the number of worm starts."],["Why is it self-locking?","With a small lead angle, friction stops the wheel from driving the worm."]]},
+rack:{how:"The pinion rotates and its teeth push the rack teeth, so rotation becomes straight-line motion. The rack moves one pitch-circle circumference for every turn of the pinion: travel = pi x d.",parts:["Pinion","Rack","Guide","Mounting plate"],uses:["Lathe carriage drives","Car steering gear","Drill press quills"],steps:["Press Run and watch the rack slide","Compare the pinion turn with the rack travel","Pull apart to separate the two","Check backlash when meshed"],care:"Keep the teeth lightly oiled and free of chips.",viva:[["How far does the rack move per turn?","Pi times the pitch diameter, which is pi x m x z."],["What is backlash?","The small clearance between meshing teeth."]]},
+chain:{how:"The chain rollers fit between the sprocket teeth, so power passes with no slip. The chain loops over both sprockets, and here the small driver turns twice as fast as the large driven sprocket.",parts:["Driver sprocket","Driven sprocket","Roller chain","Shafts","Chain guard"],uses:["Bicycles and motorcycles","Conveyors","Agricultural machines"],steps:["Align both sprockets in one plane","Fit the chain and join it with the connecting link","Adjust for a little slack","Fit the chain guard"],care:"Lubricate often and replace the chain when it has stretched over 2 percent.",viva:[["Chain versus belt?","A chain does not slip and carries more load, but is noisier and needs lubrication."],["How is the ratio found?","Driven teeth divided by driver teeth."]]},
+ujoint:{how:"Two yokes are joined by a cross-shaped spider, so two shafts can turn together even when their axes meet at an angle. The output speed varies slightly through each turn, so vehicles use a pair of joints to cancel this.",parts:["Input yoke","Output yoke","Cross (spider)","Needle bearings"],uses:["Vehicle propeller shafts","Steering columns","Rolling mills"],steps:["Press Run to turn the joint","Note the yoke and cross movement","Pull apart to separate the parts","Compare the two shaft angles"],care:"Grease the bearings on a schedule and check for play.",viva:[["Why use two joints in a drive shaft?","The second cancels the speed variation of the first when the angles are equal."],["What is the limit on angle?","About 30 degrees, beyond which wear and speed variation grow."]]},
+fourbar:{how:"Four rigid links are pinned in a loop with one link fixed to the frame. When the short crank rotates fully, the coupler pushes the rocker through an arc. Changing link lengths changes the path and angle of the motion.",parts:["Fixed link (frame)","Crank","Coupler","Rocker"],uses:["Windscreen wipers","Presses and cranes","Folding mechanisms"],steps:["Press Run and watch the crank turn","Follow the rocker as it swings","Pull apart to see the links","Try to name the links and joints"],care:"Lubricate each pin joint and check for play.",viva:[["What is Grashof's law?","If the shortest plus longest link is not more than the sum of the other two, the shortest link can rotate fully."],["How many degrees of freedom does it have?","One."]]},
+jack:{how:"Pumping the handle pushes a small piston that forces oil into the larger ram cylinder. Pressure is the same everywhere in the fluid, so the force on the big ram is the pressure times its larger area. The load rises slowly but with little effort.",parts:["Handle and pump piston","Oil reservoir","Valves","Ram","Cylinder body"],uses:["Lifting vehicles","Bending and pressing in workshops","Heavy machinery"],steps:["Close the release valve","Pump the handle to raise the ram","Support the load on stands","Open the release valve slowly to lower it"],care:"Check the oil level and look for leaks around the seals.",viva:[["State Pascal's law.","Pressure applied to a confined fluid is passed on equally in all directions."],["How do you find the mechanical advantage?","Ram area divided by pump piston area, times the lever ratio."]]},
+pipewrench:{how:"The hook jaw and heel jaw both have teeth. When you pull the handle, the hook jaw pivots and grips harder as the force increases, so the wrench bites into round pipe without slipping.",parts:["Handle","Hook jaw","Heel jaw","Adjusting nut","Spring"],uses:["Plumbing pipes and fittings","Round bar and shafts","Pipe unions"],steps:["Set the jaw opening slightly wider than the pipe","Seat the hook jaw on the turning side","Pull the handle toward you","Release and re-grip as needed"],care:"Clean the teeth and oil the adjusting nut.",viva:[["Why not use it on nuts?","The teeth mark and round off the corners."],["Which way does it turn?","In the direction the hook jaw leads."]]},
+torch:{how:"Oxygen and acetylene flow through two hoses into the mixing chamber and out of the nozzle. The burning mixture reaches about 3100 degrees Celsius, enough to melt the edges of steel so they fuse with a filler rod.",parts:["Gas hoses","Control valves","Mixing chamber","Lance","Nozzle (tip)"],uses:["Welding mild steel sheet","Brazing","Cutting with a special torch"],steps:["Check hoses and regulators for leaks","Open acetylene a little and light the torch","Open oxygen to a neutral flame","Shut acetylene first when finishing"],care:"Keep hoses and fittings free of oil. Fit flashback arrestors.",viva:[["What is a neutral flame?","One where oxygen and acetylene are balanced, with a clean inner cone."],["Why close acetylene first?","It stops the fuel supply and prevents a sooty flame and flashback."]]},
+flywheel:{how:"A flywheel has a large moment of inertia. It stores energy when the engine speeds up and gives it back when the engine slows, so the shaft speed stays smooth between power strokes. The clutch plate presses on it to pass drive to the gearbox.",parts:["Flywheel rim","Ring gear","Clutch plate with lining","Hub and spline","Crank flange"],uses:["Piston engines","Punch presses","Energy storage"],steps:["Press Run to spin the wheel","Notice the heavy rim","Pull apart to see the clutch plate","Compare plate and flywheel faces"],care:"Check for cracks and face wear. Balance after machining.",viva:[["What does a flywheel do?","It smooths speed variation by storing and releasing kinetic energy."],["What is moment of inertia?","A measure of how hard it is to change the rotation. For a thin ring I = m r^2."]]}
+};
+
+/* ============ NAV ============ */
+const menuBtn=document.getElementById('menuBtn'),navList=document.getElementById('navList');
+menuBtn.onclick=()=>{const o=navList.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o)};
+navList.querySelectorAll('a').forEach(a=>a.onclick=()=>{navList.classList.remove('open');menuBtn.setAttribute('aria-expanded',false)});
+
+/* ============ FACULTY ============ */
+document.getElementById('facultyList').innerHTML=FACULTY.map(f=>`
+<details>
+  <summary><span class="ini">${f.i}</span><span class="fn">${f.n}</span><span class="fr">${f.r}</span><span class="fa">${f.a}</span><span class="plus" aria-hidden="true">+</span></summary>
+  <div class="fdet">
+    <div><b>Teaches</b>${f.c}</div>
+    <div><b>Lab</b>${f.l}<br><b style="margin-top:8px">Office hours</b>${f.h}</div>
+    <div><b>Email</b><a href="mailto:${f.e}">${f.e}</a></div>
+  </div>
+</details>`).join('');
+
+/* ============ PROJECTS ============ */
+const projGrid=document.getElementById('projGrid');
+function renderProjects(y){
+  projGrid.innerHTML=PROJECTS.filter(p=>!y||p.y===y).map(p=>`
+  <article class="proj" data-y="${p.y}"><h3>${p.t}</h3><p>${p.d}</p>
+  <div class="meta"><span>${YEAR[p.y]}, ${p.g}</span><span>${p.k}</span></div></article>`).join('');
+}
+renderProjects(0);
+document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.setAttribute('aria-pressed',x===b));
+  renderProjects(+b.dataset.y);
+});
+
+/* ============ NOTICES ============ */
+function renderNotices(){
+  const all=[...(store.get('notices')||[]),...NOTICES];
+  $('noticeList').innerHTML=all.map(n=>`<div class="notice"><time>${esc(n.d)}</time><div><b>${esc(n.t)}</b><p>${esc(n.p)}${n.by?` <i>Posted by ${esc(n.by)}</i>`:''}</p></div><span class="tag ${esc(n.g)}">${esc(n.gl)}</span></div>`).join('');
+}
+renderNotices();
+
+/* ============ CALCULATORS ============ */
+document.querySelectorAll('.tabs button').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('.tabs button').forEach(x=>x.setAttribute('aria-selected',x===b));
+  document.querySelectorAll('.calc').forEach(c=>c.classList.toggle('on',c.id==='calc-'+b.dataset.t));
+});
+const f=(v,d=1)=>isFinite(v)?(+v).toLocaleString(undefined,{maximumFractionDigits:d}):'–';
+function calcGear(){
+  const z1=+$('g1').value,z2=+$('g2').value,n=+$('gn').value,t=+$('gt').value,e=+$('ge').value/100;
+  const r=z2/z1;
+  $('gr').textContent=isFinite(r)?f(r,2)+' : 1':'–';
+  $('gos').textContent=f(n/r,0)+' rpm';
+  $('got').textContent=f(t*r*e,1)+' N·m';
+  $('gty').textContent=r>1?'Speed reducer':r<1?'Speed increaser':'1 : 1 drive';
+}
+['g1','g2','gn','gt','ge'].forEach(i=>$(i).oninput=calcGear);calcGear();
+function calcBeam(){
+  const L=+$('bL').value,P=+$('bP').value,b=+$('bb').value,h=+$('bh').value;
+  const [E,Y]=$('bm').value.split('|').map(Number);
+  const I=b*h**3/12,M=P*L/4,s=M*(h/2)/I,d=P*L**3/(48*E*I),fs=Y/s;
+  $('bI').textContent=f(I,0)+' mm⁴';$('bS').textContent=f(s,1)+' MPa';
+  $('bD').textContent=f(d,2)+' mm';$('bF').textContent=f(fs,2);
+  const v=$('bV');v.className='verdict'+(fs<1.5?' bad':'');
+  v.textContent=fs<1?'This beam yields under the load. Increase depth first, since strength grows with the square of h.':fs<1.5?'Safe on paper but below the usual margin of 1.5. Consider a deeper section.':'Comfortable margin for a static load. Also check deflection against your limit.';
+}
+['bL','bP','bb','bh','bm'].forEach(i=>$(i).oninput=calcBeam);calcBeam();
+function calcLathe(){
+  const D=+$('lD').value,L=+$('lL').value,F=+$('lF').value,V=+$('lM').value;
+  const N=1000*V/(Math.PI*D);
+  $('lN').textContent=f(N,0)+' rpm';
+  $('lT').textContent=f(L/(F*N)*60,0)+' seconds';
+}
+['lD','lL','lF','lM'].forEach(i=>$(i).oninput=calcLathe);calcLathe();
+
+/* ============ BOOKING ============ */
+const SLOTS=[['9:00 to 11:00','Morning 1'],['11:00 to 13:00','Morning 2'],['14:00 to 16:00','Afternoon 1'],['16:00 to 18:00','Afternoon 2']];
+let bookings=store.get('bookings')||[];
+const saveB=()=>store.set('bookings',bookings);
+let pickedSlot=null;
+const dateEl=$('bkDate');
+const today=new Date();const iso=d=>new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+dateEl.min=iso(today);dateEl.value=iso(today);
+function hash(s){let h=0;for(const c of s)h=(h*31+c.charCodeAt(0))|0;return Math.abs(h)}
+function renderSlots(){
+  const m=$('bkMachine').value,d=dateEl.value;
+  pickedSlot=null;
+  $('slots').innerHTML=SLOTS.map((sl,i)=>{
+    const taken=bookings.some(b=>b.m===m&&b.d===d&&b.s===i&&b.status!=='Rejected')||hash(m+d+i)%4===0;
+    return `<button class="slot" data-i="${i}" aria-pressed="false" ${taken?'disabled':''}>${sl[0]}<small>${taken?'Booked':sl[1]+', free'}</small></button>`;
+  }).join('');
+  $('slots').querySelectorAll('.slot').forEach(b=>b.onclick=()=>{
+    $('slots').querySelectorAll('.slot').forEach(x=>x.setAttribute('aria-pressed',x===b));
+    pickedSlot=+b.dataset.i;updateBtn();
+  });
+  updateBtn();
+}
+function updateBtn(){
+  const ok=getUser()&&[...document.querySelectorAll('.sc')].every(c=>c.checked)&&pickedSlot!==null&&dateEl.value;
+  $('bkBtn').disabled=!ok;
+}
+document.querySelectorAll('.sc').forEach(c=>c.onchange=updateBtn);
+$('bkMachine').onchange=renderSlots;dateEl.onchange=renderSlots;
+function renderBookings(){
+  const u=getUser(),mine=u?bookings.filter(b=>b.uid===u.id):[];
+  $('bkEmpty').style.display=mine.length?'none':'block';
+  $('bkEmpty').textContent=u?'No bookings yet. Your sessions will appear here.':'Log in to see your bookings.';
+  $('bkList').innerHTML=mine.map(b=>`<li><span><b>${esc(b.m)}</b> <span class="st ${b.status}">${b.status}</span><br>${esc(b.d)}, ${SLOTS[b.s][0]}</span><button data-id="${b.id}">Cancel</button></li>`).join('');
+  $('bkList').querySelectorAll('button').forEach(x=>x.onclick=()=>{
+    bookings=bookings.filter(b=>b.id!==+x.dataset.id);saveB();renderBookings();renderSlots();$('bkMsg').textContent='Booking cancelled.';
+  });
+}
+$('bkBtn').onclick=()=>{
+  const u=getUser();if(!u)return;
+  bookings.push({id:Date.now(),m:$('bkMachine').value,d:dateEl.value,s:pickedSlot,uid:u.id,who:u.name,role:u.role,status:u.role==='teacher'?'Approved':'Pending'});
+  saveB();
+  $('bkMsg').textContent=u.role==='teacher'?'Booked and approved.':'Request sent. A teacher will approve it.';
+  renderBookings();renderSlots();
+};
+function syncBooking(){
+  const u=getUser();
+  $('bkName').value=u?u.name:'';$('bkName').readOnly=!!u;$('bkName').placeholder='Log in to book';
+  $('bkLogin').hidden=!!u;$('bkMsg').textContent='';
+  renderSlots();renderBookings();
+}
+
+/* ============ CONTACT ============ */
+$('contactForm').onsubmit=e=>{e.preventDefault();$('cfMsg').textContent='Thanks. Your message is ready to send once the form is connected to an email service.';e.target.reset()};
+
+/* ============ 3D ============ */
+const M=(c,m=.55,r=.4)=>new THREE.MeshStandardMaterial({color:c,metalness:m,roughness:r});
+const reduceMotion=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function makeStage(canvas,z){
+  const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(40,1,.1,100);camera.position.set(0,0,z);
+  scene.add(new THREE.HemisphereLight(0xffffff,0x8899aa,1.0));
+  const a=new THREE.DirectionalLight(0xffffff,1.0);a.position.set(4,6,8);scene.add(a);
+  const b=new THREE.DirectionalLight(0xaec3ff,.6);b.position.set(-6,-3,4);scene.add(b);
+  const st={renderer,scene,camera,visible:true};
+  const ro=new ResizeObserver(()=>{
+    const w=canvas.clientWidth,h=canvas.clientHeight;if(!w||!h)return;
+    renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();
+  });
+  ro.observe(canvas);
+  new IntersectionObserver(en=>{st.visible=en[0].isIntersecting}).observe(canvas);
+  return st;
+}
+function enableDrag(canvas,getTarget){
+  let down=false,lx=0,ly=0;
+  canvas.addEventListener('pointerdown',e=>{down=true;lx=e.clientX;ly=e.clientY;canvas.setPointerCapture(e.pointerId)});
+  canvas.addEventListener('pointerup',()=>down=false);
+  canvas.addEventListener('pointercancel',()=>down=false);
+  canvas.addEventListener('pointermove',e=>{
+    if(!down)return;const t=getTarget();if(!t)return;
+    t.rotation.y+=(e.clientX-lx)*.01;
+    if(e.pointerType==='mouse')t.rotation.x=Math.max(-1.4,Math.min(1.4,t.rotation.x+(e.clientY-ly)*.01));
+    lx=e.clientX;ly=e.clientY;
+  });
+}
+function makeGear(teeth,m,depth,color,lightHoles){
+  const pr=m*teeth/2,tip=pr+m*.9,root=pr-m*1.1,s=Math.PI*2/teeth;
+  const sh=new THREE.Shape();
+  for(let i=0;i<teeth;i++){
+    const a=i*s;
+    [[root,0],[tip,.2],[tip,.45],[root,.65]].forEach(([r,k],j)=>{
+      const x=Math.cos(a+k*s)*r,y=Math.sin(a+k*s)*r;
+      (i===0&&j===0)?sh.moveTo(x,y):sh.lineTo(x,y);
+    });
+  }
+  sh.closePath();
+  const hub=new THREE.Path();hub.absarc(0,0,root*.2,0,Math.PI*2,true);sh.holes.push(hub);
+  if(lightHoles){for(let k=0;k<5;k++){const p=new THREE.Path();const a=k/5*Math.PI*2;p.absarc(Math.cos(a)*root*.58,Math.sin(a)*root*.58,root*.19,0,Math.PI*2,true);sh.holes.push(p)}}
+  const g=new THREE.ExtrudeGeometry(sh,{depth,bevelEnabled:false,curveSegments:20});
+  g.translate(0,0,-depth/2);
+  return new THREE.Mesh(g,M(color,.6,.38));
+}
+
+/* ---- hero gears ---- */
+const hero=makeStage($('heroCanvas'),9.5);
+const heroGroup=new THREE.Group();hero.scene.add(heroGroup);
+heroGroup.rotation.set(.25,-.45,0);
+let gA,gB,gz1=20,gz2=45;
+function buildHeroGears(z1,z2){
+  while(heroGroup.children.length){const c=heroGroup.children[0];heroGroup.remove(c);c.geometry&&c.geometry.dispose()}
+  gz1=z1;gz2=z2;
+  const m=10.4/(z1+z2);
+  gA=makeGear(z1,m,1.0,0x1B4DDB,z1>=24);gB=makeGear(z2,m,1.0,0xB9C3CC,z2>=24);
+  const xa=-m*z1/2,xb=m*z2/2;
+  gA.position.x=xa;gB.position.x=xb;
+  const left=xa-(m*z1/2+m),right=xb+(m*z2/2+m),span=right-left,mid=(left+right)/2;
+  heroGroup.add(gA);heroGroup.add(gB);
+  const holder=new THREE.Group();
+  heroGroup.children.forEach(c=>c.position.x-=mid);
+  heroGroup.scale.setScalar(Math.min(1,6.4/span)*1.0);
+  $('heroCap').textContent=`Driver ${z1} teeth · Driven ${z2} teeth`;
+}
+buildHeroGears(20,45);
+enableDrag($('heroCanvas'),()=>heroGroup);
+$('gShow').onclick=()=>{
+  const z1=Math.max(8,Math.min(60,Math.round(+$('g1').value)||20)),z2=Math.max(8,Math.min(60,Math.round(+$('g2').value)||45));
+  buildHeroGears(z1,z2);
+  location.hash='#/';
+};
+
+/* ---- tool builders ---- */
+const wrap=o=>{const g=new THREE.Group();g.add(o);return g};
+const cylX=(r,l,mat,seg=32)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,l,seg),mat);m.rotation.z=Math.PI/2;return m};
+const cylZ=(r,l,mat,seg=32)=>{const m=new THREE.Mesh(new THREE.CylinderGeometry(r,r,l,seg),mat);m.rotation.x=Math.PI/2;return m};
+const cylY=(r,l,mat,seg=32)=>new THREE.Mesh(new THREE.CylinderGeometry(r,r,l,seg),mat);
+const box=(w,h,d,mat)=>new THREE.Mesh(new THREE.BoxGeometry(w,h,d),mat);
+function part(g,o,x,y,z,dir,spin,spd,upd){
+  o.position.set(x,y,z);o.userData.base=o.position.clone();o.userData.base0=o.position.clone();
+  o.userData.off=new THREE.Vector3();
+  o.userData.dir=new THREE.Vector3(...(dir||[0,0,0]));
+  if(spin){o.userData.spin=spin;o.userData.spd=spd||1}
+  if(upd)o.userData.upd=upd;
+  g.add(o);return o;
+}
+const hexShape=(R,holeR)=>{
+  const s=new THREE.Shape();
+  for(let i=0;i<6;i++){const a=i*Math.PI/3;const x=Math.cos(a)*R,y=Math.sin(a)*R;i?s.lineTo(x,y):s.moveTo(x,y)}
+  s.closePath();
+  if(holeR){const h=new THREE.Path();h.absarc(0,0,holeR,0,Math.PI*2,true);s.holes.push(h)}
+  return s;
+};
+const extrude=(shape,depth,mat)=>{const g=new THREE.ExtrudeGeometry(shape,{depth,bevelEnabled:false,curveSegments:24});g.translate(0,0,-depth/2);return new THREE.Mesh(g,mat)};
+const ringShape=(R,r)=>{const s=new THREE.Shape();s.absarc(0,0,R,0,Math.PI*2,false);const h=new THREE.Path();h.absarc(0,0,r,0,Math.PI*2,true);s.holes.push(h);return s};
+
+const BUILD={
+lathe(){
+  const g=new THREE.Group(),steel=M(0x7b8794,.7,.35),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),orange=M(0xF26B1D,.3,.5),bright=M(0xd2d9de,.9,.2);
+  part(g,box(6.4,.35,1.3,dark),0,0,0,[0,-.3,0]);
+  part(g,box(.5,1.6,1.1,steel),-2.4,-.97,0,[0,-1,0]);
+  part(g,box(.5,1.6,1.1,steel),2.4,-.97,0,[0,-1,0]);
+  part(g,box(1.5,1.4,1.2,blue),-2.4,.88,0,[-1.2,0,0]);
+  const chuck=new THREE.Group();chuck.add(cylX(.55,.4,dark));
+  for(let k=0;k<3;k++){const a=k*Math.PI*2/3;const j=box(.3,.22,.22,bright);j.position.set(.15,Math.cos(a)*.38,Math.sin(a)*.38);chuck.add(j)}
+  part(g,chuck,-1.45,.95,0,[-.8,0,0],'x',3);
+  part(g,wrap(cylX(.28,2.5,bright)),-.1,.95,0,[0,1,0],'x',3);
+  part(g,box(1,1,.9,blue),2.3,.68,0,[1.2,0,0]);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.15,.5,16),bright);tip.rotation.z=Math.PI/2;
+  part(g,tip,1.55,.95,0,[1.6,0,0]);
+  part(g,box(1.1,.35,1.9,steel),.4,.36,.2,[0,.8,0]);
+  part(g,box(.6,.25,.7,orange),.4,.62,.9,[0,1.4,.4]);
+  part(g,box(.3,.45,.3,dark),.4,.92,1.0,[0,1.9,.5]);
+  return g;
+},
+gear(){
+  const g=new THREE.Group();
+  const gear=makeGear(24,.2,.8,0x1B4DDB,true);
+  part(g,gear,0,0,0,[0,0,.2],'z',1.2);
+  part(g,wrap(cylZ(.2,3.6,M(0xd2d9de,.9,.2))),0,0,0,[0,0,-.6],'z',1.2);
+  part(g,box(.14,.2,1.1,M(0xF26B1D,.3,.5)),0,.21,0,[0,.9,0],'z',1.2);
+  part(g,wrap(cylZ(.4,.35,M(0x2b333b,.6,.5))),0,0,.9,[0,0,1.2],'z',1.2);
+  return g;
+},
+bearing(){
+  const g=new THREE.Group(),steel=M(0xc7d0d7,.9,.22),inner=M(0xa9b5be,.9,.25),ball=M(0xf0f3f5,1,.12);
+  const lathe=pts=>{const m=new THREE.Mesh(new THREE.LatheGeometry(pts.map(p=>new THREE.Vector2(p[0],p[1])),48),Array.isArray(0)?null:steel);m.rotation.x=Math.PI/2;m.material.side=THREE.DoubleSide;return m};
+  const outer=lathe([[1.05,-.22],[1.4,-.22],[1.4,.22],[1.05,.22],[1.05,-.22]]);
+  const innerR=lathe([[.5,-.22],[.82,-.22],[.82,.22],[.5,.22],[.5,-.22]]);innerR.material=inner;innerR.material.side=THREE.DoubleSide;
+  part(g,outer,0,0,0,[0,0,-1]);
+  part(g,wrap(innerR),0,0,0,[0,0,1],'z',1.5);
+  const balls=new THREE.Group();
+  for(let k=0;k<8;k++){const a=k/8*Math.PI*2;const b=new THREE.Mesh(new THREE.SphereGeometry(.2,24,16),ball);b.position.set(Math.cos(a)*.93,Math.sin(a)*.93,0);balls.add(b)}
+  part(g,balls,0,0,0,[0,0,0],'z',.75);
+  return g;
+},
+drill(){
+  const g=new THREE.Group(),hss=M(0xb0a37a,.85,.3),shank=M(0xd2d9de,.9,.2);
+  const body=new THREE.Group();
+  body.add(new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,2.6,24),hss));
+  for(let s=0;s<2;s++){
+    const pts=[];for(let i=0;i<=90;i++){const t=i/90,a=t*Math.PI*2*3.2+s*Math.PI;pts.push(new THREE.Vector3(Math.cos(a)*.2,-1.3+t*2.6,Math.sin(a)*.2))}
+    body.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),180,.1,8),hss));
+  }
+  part(g,body,0,0,0,[0,-.2,0],'y',2);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.3,.5,24),hss);tip.rotation.x=Math.PI;
+  part(g,wrap(tip),0,-1.55,0,[0,-1,0],'y',2);
+  part(g,wrap(new THREE.Mesh(new THREE.CylinderGeometry(.32,.32,1.6,28),shank)),0,1.95,0,[0,1,0],'y',2);
+  return g;
+},
+caliper(){
+  const g=new THREE.Group(),steel=M(0xc3ccd3,.85,.25),dark=M(0x1b242c,.4,.6),orange=M(0xF26B1D,.3,.5);
+  const beam=new THREE.Group();
+  beam.add(box(6,.55,.14,steel));
+  const jaw=box(.28,1.5,.14,steel);jaw.position.set(-2.86,-.5,0);beam.add(jaw);
+  for(let i=0;i<=28;i++){const t=box(.015,i%5===0?.22:.12,.02,dark);t.position.set(-2.55+i*.19,.16,.08);beam.add(t)}
+  part(g,beam,0,0,0,[0,0,0]);
+  const sl=new THREE.Group();
+  const body=box(1.3,.9,.22,steel);body.position.set(0,0,.04);sl.add(body);
+  const mj=box(.28,1.5,.14,steel);mj.position.set(-.66,-.5,0);sl.add(mj);
+  const wheel=cylZ(.2,.12,orange);wheel.position.set(.2,.12,.2);sl.add(wheel);
+  part(g,sl,-1.92,0,0,[2.6,0,.2]);
+  return g;
+},
+bolt(){
+  const g=new THREE.Group(),steel=M(0x8c98a3,.85,.3),bright=M(0xc7d0d7,.9,.22),plate=M(0x4a5864,.6,.45);
+  const head=extrude(hexShape(.62),.38,steel);head.rotation.x=Math.PI/2;
+  part(g,head,0,1.55,0,[0,1.6,0]);
+  const shaft=new THREE.Group();
+  shaft.add(new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,1.8,28),bright));
+  for(let i=0;i<13;i++){const t=new THREE.Mesh(new THREE.TorusGeometry(.3,.04,8,28),bright);t.rotation.x=Math.PI/2;t.position.y=-.75+i*.14;shaft.add(t)}
+  part(g,shaft,0,.62,0,[0,-.2,0]);
+  part(g,box(2.4,.36,1.5,plate),0,1.18,0,[0,.7,0]);
+  const wash=extrude(ringShape(.85,.33),.1,bright);wash.rotation.x=Math.PI/2;
+  part(g,wash,0,.92,0,[0,-.6,0]);
+  const nut=extrude(hexShape(.62,.28),.4,steel);nut.rotation.x=Math.PI/2;
+  part(g,nut,0,.65,0,[0,-1.5,0]);
+  return g;
+},
+spanner(){
+  const g=new THREE.Group(),mat=M(0xaeb9c2,.9,.25);
+  const mk=(R,hex,rot)=>{
+    const s=new THREE.Shape();s.absarc(0,0,R,0,Math.PI*2,false);
+    const h=new THREE.Path();
+    for(let i=0;i<6;i++){const a=i*Math.PI/3+Math.PI/6;const x=Math.cos(a)*hex,y=Math.sin(a)*hex;i?h.lineTo(x,y):h.moveTo(x,y)}
+    h.closePath();s.holes.push(h);
+    const m=extrude(s,.22,mat);m.rotation.z=rot;return m;
+  };
+  part(g,box(4.2,.5,.22,mat),0,0,0,[0,0,0]);
+  part(g,mk(.85,.5,.26),-2.35,0,0,[-.8,0,0]);
+  part(g,mk(.75,.44,-.26),2.3,0,0,[.8,0,0]);
+  return g;
+}
+};
+
+Object.assign(BUILD,{
+endmill(){
+  const g=new THREE.Group(),hss=M(0x8f9aa3,.9,.25),shank=M(0xd2d9de,.9,.2);
+  const body=new THREE.Group();
+  body.add(new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,2,24),hss));
+  for(let s=0;s<4;s++){
+    const pts=[];for(let i=0;i<=60;i++){const t=i/60,a=t*Math.PI*2*1.4+s*Math.PI/2;pts.push(new THREE.Vector3(Math.cos(a)*.32,-1+t*2,Math.sin(a)*.32))}
+    body.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),120,.1,8),hss));
+  }
+  part(g,body,0,0,0,[0,-.2,0],'y',2);
+  part(g,wrap(new THREE.Mesh(new THREE.CylinderGeometry(.42,.42,1.8,28),shank)),0,1.9,0,[0,1,0],'y',2);
+  return g;
+},
+piston(){
+  const g=new THREE.Group(),steel=M(0xc7d0d7,.9,.25),alu=M(0xaab4bc,.8,.35),dark=M(0x2b333b,.6,.5);
+  const glass=new THREE.MeshStandardMaterial({color:0x7fb2ff,transparent:true,opacity:.18,side:THREE.DoubleSide,roughness:.2});
+  const R=.7,L=2.2;
+  const pos=ph=>{const cx=-R*Math.sin(ph),cy=R*Math.cos(ph);return {cx,cy,py:cy+Math.sqrt(L*L-cx*cx)}};
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(.74,.74,2.9,40,1,true),glass),0,2.3,0,[0,0,-1.4]);
+  const pis=new THREE.Group();
+  pis.add(new THREE.Mesh(new THREE.CylinderGeometry(.66,.66,.9,32),alu));
+  [.3,.18].forEach(y=>{const r=new THREE.Mesh(new THREE.TorusGeometry(.66,.03,8,32),dark);r.rotation.x=Math.PI/2;r.position.y=y;pis.add(r)});
+  pis.add(cylZ(.12,1.4,steel));
+  part(g,pis,0,2.9,0,[0,1.3,0],null,null,ph=>{pis.userData.off.set(0,pos(ph).py-2.9,0)});
+  const rod=new THREE.Group();
+  rod.add(box(.24,L,.16,steel));
+  const big=cylZ(.3,.2,steel);big.position.y=-L/2;rod.add(big);
+  const sm=cylZ(.18,.2,steel);sm.position.y=L/2;rod.add(sm);
+  part(g,rod,0,1.8,0,[0,0,1.2],null,null,ph=>{const q=pos(ph);rod.userData.off.set(q.cx/2,(q.cy+q.py)/2-1.8,0);rod.rotation.z=Math.atan2(q.cx,q.py-q.cy)});
+  const crank=new THREE.Group();
+  const disc=cylZ(1.0,.2,dark);disc.position.z=-.25;crank.add(disc);
+  const cp=cylZ(.17,.6,steel);cp.position.set(0,R,-.1);crank.add(cp);
+  const sh=cylZ(.2,.5,steel);sh.position.z=-.2;crank.add(sh);
+  part(g,crank,0,0,0,[0,-.6,-.6],null,null,ph=>{crank.rotation.z=ph});
+  return g;
+},
+vise(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),bright=M(0xd2d9de,.9,.2),steel=M(0x7b8794,.7,.35);
+  part(g,box(3.6,.35,2,dark),.4,-1,0,[0,-.8,0]);
+  part(g,box(1,1.4,1.7,blue),-1.2,-.1,0,[-1,0,0]);
+  part(g,box(.12,.9,1.5,bright),-.64,.15,0,[-.8,0,0]);
+  part(g,cylX(.17,3.8,steel),.9,-.5,0,[0,0,.8]);
+  const jaw=new THREE.Group();jaw.add(box(.9,1.4,1.7,blue));
+  const pl=box(.12,.9,1.5,bright);pl.position.set(-.51,.25,0);jaw.add(pl);
+  part(g,jaw,.1,-.1,0,[0,.9,0],null,null,ph=>jaw.userData.off.set(.45*(1-Math.cos(ph*.6))/2,0,0));
+  const scr=new THREE.Group();scr.add(cylX(.12,3.6,steel));
+  const hd=cylZ(.07,1.3,bright);hd.position.x=1.9;scr.add(hd);
+  [-.65,.65].forEach(z=>{const k=new THREE.Mesh(new THREE.SphereGeometry(.13,12,8),dark);k.position.set(1.9,0,z);scr.add(k)});
+  part(g,scr,.5,-.2,0,[0,0,1.2],'x',1.5);
+  return g;
+},
+micrometer(){
+  const g=new THREE.Group(),frameM=M(0x2d3a46,.6,.4),bright=M(0xd2d9de,.9,.2),orange=M(0xF26B1D,.3,.5),dark=M(0x1b242c,.5,.5);
+  const frame=new THREE.Mesh(new THREE.TorusGeometry(1.5,.2,14,40,Math.PI),frameM);frame.rotation.z=Math.PI;
+  part(g,frame,0,0,0,[0,-.5,0]);
+  part(g,cylX(.17,.6,bright),-1.15,0,0,[-1,0,0]);
+  part(g,cylX(.3,1.8,bright),2.4,0,0,[0,0,1]);
+  const th=new THREE.Group();
+  const sp=cylX(.12,3.0,bright);sp.position.x=-1.5;th.add(sp);
+  const thim=cylX(.42,1.2,dark);thim.position.x=.4;th.add(thim);
+  for(let i=0;i<6;i++){const t=new THREE.Mesh(new THREE.TorusGeometry(.43,.015,6,24),bright);t.rotation.y=Math.PI/2;t.position.x=-.1+i*.2;th.add(t)}
+  const rk=cylX(.32,.5,orange);rk.position.x=1.25;th.add(rk);
+  part(g,th,3.5,0,0,[1.4,0,0],null,null,ph=>th.userData.off.set(-1.2*(1-Math.cos(ph*.7))/2,0,0));
+  return g;
+},
+hammer(){
+  const g=new THREE.Group(),steel=M(0x56636f,.85,.3),wood=M(0x9a6a3a,.05,.8),bright=M(0xc7d0d7,.9,.2);
+  part(g,box(1.7,.7,.7,steel),0,1.5,0,[0,1.2,0]);
+  const peen=new THREE.Mesh(new THREE.SphereGeometry(.35,24,16),steel);peen.scale.set(1.3,1,1);
+  part(g,peen,1.05,1.5,0,[1,1.2,0]);
+  part(g,cylX(.36,.25,bright),-.97,1.5,0,[-1,1.2,0]);
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(.12,.17,3.4,20),wood),0,-.3,0,[0,-1,0]);
+  return g;
+},
+spring(){
+  const g=new THREE.Group(),m=M(0xF26B1D,.5,.35),bright=M(0xc7d0d7,.9,.2);
+  const turns=8,H=3,pts=[];
+  for(let i=0;i<=turns*24;i++){const t=i/(turns*24),a=t*Math.PI*2*turns;pts.push(new THREE.Vector3(Math.cos(a)*.75,-H/2+t*H,Math.sin(a)*.75))}
+  const coil=new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts),turns*48,.1,8),m);
+  const sc=ph=>.82+.18*Math.cos(ph*1.4);
+  part(g,coil,0,0,0,[0,0,0],null,null,ph=>{coil.scale.y=sc(ph)});
+  const top=new THREE.Mesh(new THREE.CylinderGeometry(1,1,.14,32),bright);
+  part(g,top,0,1.58,0,[0,1,0],null,null,ph=>top.userData.off.set(0,(sc(ph)-1)*1.5,0));
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(1,1,.14,32),bright),0,-1.58,0,[0,-1,0]);
+  return g;
+},
+pulley(){
+  const g=new THREE.Group(),steel=M(0x7b8794,.8,.35),blue=M(0x1B4DDB,.4,.45),bright=M(0xd2d9de,.9,.2),beltM=M(0x20262b,.1,.8);
+  const mk=(R,mat)=>{
+    const pts=[[.25,-.3],[R,-.3],[R,-.12],[R-.2,0],[R,.12],[R,.3],[.25,.3]].map(p=>new THREE.Vector2(p[0],p[1]));
+    const m=new THREE.Mesh(new THREE.LatheGeometry(pts,48),mat);m.rotation.x=Math.PI/2;m.material.side=THREE.DoubleSide;return m;
+  };
+  part(g,wrap(mk(1.3,blue)),-1.5,0,0,[0,0,-.8],'z',1);
+  part(g,wrap(mk(.7,steel)),1.5,0,0,[0,0,-.8],'z',1.857);
+  part(g,wrap(cylZ(.14,1.3,bright)),-1.5,0,0,[0,0,-.8],'z',1);
+  part(g,wrap(cylZ(.1,1.3,bright)),1.5,0,0,[0,0,-.8],'z',1.857);
+  const R1=1.2,R2=.6,d=3,a0=Math.acos((R2-R1)/d),arc1=[],arc2=[];
+  for(let i=0;i<=36;i++){const a=a0+(2*Math.PI-2*a0)*i/36;arc1.push(new THREE.Vector3(-1.5+Math.cos(a)*R1,Math.sin(a)*R1,0))}
+  for(let i=0;i<=18;i++){const a=-a0+2*a0*i/18;arc2.push(new THREE.Vector3(1.5+Math.cos(a)*R2,Math.sin(a)*R2,0))}
+  const seg=(A,B)=>[1,2,3].map(k=>A.clone().lerp(B,k/4));
+  const pts=[...arc1,...seg(arc1[arc1.length-1],arc2[0]),...arc2,...seg(arc2[arc2.length-1],arc1[0])];
+  part(g,new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts,true),240,.07,8,true),beltM),0,0,0,[0,0,.9]);
+  return g;
+},
+crankshaft(){
+  const g=new THREE.Group(),steel=M(0x8a97a2,.85,.3),dark=M(0x3a4752,.7,.4),orange=M(0xF26B1D,.3,.5);
+  const ax=(mesh,y)=>{const o=new THREE.Group();mesh.position.y=y;o.add(mesh);return o};
+  const S=(obj,x)=>part(g,obj,x,0,0,[x*.3,0,0],'x',1.2);
+  [-2.8,.3,3.3].forEach(x=>S(ax(cylX(.3,.9,steel),0),x));
+  [[-1.9,.35],[-.3,.35],[.9,-.35],[2.5,-.35]].forEach(w=>S(ax(box(.3,1.5,.9,dark),w[1]),w[0]));
+  S(ax(cylX(.25,1.6,steel),.7),-1.1);
+  S(ax(cylX(.25,1.6,steel),-.7),1.7);
+  S(ax(cylX(.9,.25,orange),0),4.1);
+  return g;
+},
+cam(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),bright=M(0xd2d9de,.9,.2),orange=M(0xF26B1D,.3,.5);
+  const rr=a=>1.0+.45*(1+Math.cos(a))/2;
+  const sh=new THREE.Shape();
+  for(let i=0;i<=120;i++){const a=i/120*Math.PI*2,r=rr(a);const x=Math.cos(a)*r,y=Math.sin(a)*r;i?sh.lineTo(x,y):sh.moveTo(x,y)}
+  const hole=new THREE.Path();hole.absarc(0,0,.15,0,Math.PI*2,true);sh.holes.push(hole);
+  const cam=extrude(sh,.5,blue);
+  part(g,cam,0,0,0,[0,0,.9],null,null,ph=>{cam.rotation.z=ph});
+  const fol=new THREE.Group();
+  const pad=new THREE.Mesh(new THREE.CylinderGeometry(.4,.4,.12,28),bright);pad.position.y=.06;fol.add(pad);
+  const stem=new THREE.Mesh(new THREE.CylinderGeometry(.13,.13,2.4,16),bright);stem.position.y=1.3;fol.add(stem);
+  part(g,fol,0,1.225,0,[0,1.2,0],null,null,ph=>fol.userData.off.set(0,rr(Math.PI/2-ph)-1.225,0));
+  part(g,box(.9,.5,.9,dark),0,3.0,0,[0,1.8,0]);
+  part(g,wrap(cylZ(.15,1.6,orange)),0,0,0,[0,0,-.9],'z',1);
+  part(g,box(2.6,.25,1.4,dark),0,-1.6,0,[0,-1,0]);
+  part(g,box(.25,1.4,.25,dark),0,-.9,-.5,[0,-.6,-.6]);
+  return g;
+},
+impeller(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.5,.35),bright=M(0xd2d9de,.9,.2);
+  const glass=new THREE.MeshStandardMaterial({color:0x7fb2ff,transparent:true,opacity:.16,side:THREE.DoubleSide,roughness:.2});
+  const imp=new THREE.Group();
+  imp.add(cylZ(1.4,.12,blue));
+  const hub=cylZ(.32,.7,bright);hub.position.z=.2;imp.add(hub);
+  for(let k=0;k<6;k++){
+    const up=[],lo=[];
+    for(let i=0;i<=20;i++){const r=.35+i*.052,a=1.3*(r-.35);const px=Math.cos(a)*r,py=Math.sin(a)*r,nx=-Math.sin(a)*.04,ny=Math.cos(a)*.04;up.push([px+nx,py+ny]);lo.push([px-nx,py-ny])}
+    const s=new THREE.Shape();
+    up.forEach((q,i)=>i?s.lineTo(q[0],q[1]):s.moveTo(q[0],q[1]));
+    lo.reverse().forEach(q=>s.lineTo(q[0],q[1]));s.closePath();
+    const bl=new THREE.Mesh(new THREE.ExtrudeGeometry(s,{depth:.4,bevelEnabled:false}),blue);
+    bl.position.z=.06;bl.rotation.z=k*Math.PI/3;imp.add(bl);
+  }
+  part(g,imp,0,0,0,[0,0,.2],'z',2);
+  const cs=new THREE.Mesh(new THREE.CylinderGeometry(1.7,1.7,.7,48,1,true),glass);cs.rotation.x=Math.PI/2;
+  part(g,cs,0,0,.25,[0,0,-1.5]);
+  const inlet=new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,1.2,32,1,true),glass);inlet.rotation.x=Math.PI/2;
+  part(g,inlet,0,0,1.2,[0,0,1.5]);
+  return g;
+},
+printer(){
+  const g=new THREE.Group(),dark=M(0x2b333b,.6,.5),blue=M(0x1B4DDB,.4,.45),bright=M(0xd2d9de,.9,.2),orange=M(0xF26B1D,.3,.5),green=M(0x2fb37a,.2,.5);
+  part(g,box(4.4,.3,3.4,dark),0,-1.6,0,[0,-1,0]);
+  part(g,box(.3,3.6,.5,blue),-1.95,.2,0,[-1.2,0,0]);
+  part(g,box(.3,3.6,.5,blue),1.95,.2,0,[1.2,0,0]);
+  part(g,box(4.2,.3,.6,blue),0,2.1,0,[0,1.2,0]);
+  part(g,cylX(.07,3.6,bright),0,-.1,0,[0,.5,0]);
+  const head=new THREE.Group();head.add(box(.7,.5,.5,orange));
+  const nz=new THREE.Mesh(new THREE.ConeGeometry(.12,.35,16),bright);nz.rotation.x=Math.PI;nz.position.y=-.42;head.add(nz);
+  part(g,head,0,-.1,0,[0,.9,0],null,null,ph=>head.userData.off.set(.9*Math.sin(ph*1.3),0,0));
+  const bed=new THREE.Group();bed.add(box(2.4,.12,2.4,bright));
+  const obj=box(.8,.2,.8,blue);obj.position.y=.16;bed.add(obj);
+  part(g,bed,0,-1.0,0,[0,-.5,0],null,null,ph=>bed.userData.off.set(0,0,.5*Math.sin(ph*.9)));
+  part(g,wrap(cylZ(.6,.3,green)),0,2.85,0,[0,1.5,0],'z',1.5);
+  return g;
+},
+grinder(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),stone=M(0xb8744f,.1,.9),bright=M(0xd2d9de,.9,.2);
+  const guardM=new THREE.MeshStandardMaterial({color:0x2b333b,metalness:.6,roughness:.5,side:THREE.DoubleSide});
+  part(g,box(2.8,.4,1.8,dark),0,-1.1,0,[0,-1,0]);
+  part(g,box(.9,1.1,1.1,blue),0,-.35,0,[0,0,-1]);
+  part(g,cylX(.55,3.0,blue),0,.35,0,[0,.6,0]);
+  [-1,1].forEach(sd=>{
+    part(g,wrap(cylX(.95,.4,stone)),sd*2.0,.35,0,[sd*1.2,0,0],'x',3);
+    part(g,wrap(cylX(.12,.8,bright)),sd*1.75,.35,0,[sd*.6,0,0],'x',3);
+    const gd=new THREE.Mesh(new THREE.CylinderGeometry(1.15,1.15,.55,28,1,true,0,Math.PI),guardM);gd.rotation.z=Math.PI/2;
+    part(g,gd,sd*2.0,.35,0,[sd*1.2,.8,0]);
+    part(g,box(.5,.1,.6,bright),sd*2.0,-.35,.8,[sd*1.2,0,.8]);
+  });
+  return g;
+}
+});
+
+Object.assign(BUILD,{
+drillpress(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),bright=M(0xd2d9de,.9,.2),steel=M(0x7b8794,.7,.35),orange=M(0xF26B1D,.3,.5);
+  part(g,box(2.6,.35,1.8,dark),0,-2.2,0,[0,-.8,0]);
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,4.4,24),bright),-.7,0,0,[-.6,0,0]);
+  part(g,box(1.5,.2,1.5,steel),0,-1.3,.2,[0,-.4,.6]);
+  part(g,box(1.6,.9,1.1,blue),0,1.9,0,[0,1,0]);
+  part(g,box(1.1,.7,.8,blue),.3,1.9,0,[.8,.8,0]);
+  const spindle=new THREE.Group();
+  spindle.add(new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,.9,20),bright));
+  const chuck=new THREE.Mesh(new THREE.CylinderGeometry(.28,.2,.5,20),dark);chuck.position.y=-.65;spindle.add(chuck);
+  const bit=new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,.9,12),bright);bit.position.y=-1.3;spindle.add(bit);
+  part(g,spindle,.4,.9,0,[0,-.5,0],'y',4,ph=>spindle.userData.off.set(0,-.25*(1-Math.cos(ph*.8))/2,0));
+  const h=new THREE.Group();h.add(cylX(.06,1.1,bright));
+  [-.55,.55].forEach(x=>{const b=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),orange);b.position.x=x;h.add(b)});
+  part(g,h,1.2,1.5,0,[1,0,0],'x',1);
+  return g;
+},
+mill(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),bright=M(0xd2d9de,.9,.2),steel=M(0x7b8794,.7,.35),orange=M(0xF26B1D,.3,.5);
+  part(g,box(2.8,.5,2.2,dark),0,-2,0,[0,-.8,0]);
+  part(g,box(1.0,3.8,1.0,blue),-.9,-.1,-.7,[-.8,0,-.6]);
+  part(g,box(1.4,.9,1.4,blue),-.2,1.5,-.2,[0,.9,0]);
+  const spindle=new THREE.Group();
+  spindle.add(new THREE.Mesh(new THREE.CylinderGeometry(.2,.2,.7,24),bright));
+  const cut=new THREE.Mesh(new THREE.CylinderGeometry(.16,.16,.8,16),orange);cut.position.y=-.7;spindle.add(cut);
+  part(g,spindle,.3,.75,.2,[.6,0,.4],'y',5);
+  part(g,box(1.6,.35,1.4,steel),0,-1.45,.1,[0,-.4,.3]);
+  const table=new THREE.Group();table.add(box(2.4,.25,1.0,bright));
+  const vice=box(.7,.5,.8,dark);vice.position.y=.37;table.add(vice);
+  const part2=box(.45,.3,.4,orange);part2.position.set(0,.77,0);table.add(part2);
+  part(g,table,0,-1.15,.2,[0,.6,.4],null,null,ph=>table.userData.off.set(.55*Math.sin(ph*.8),0,0));
+  const hw=new THREE.Group();hw.add(cylX(.05,.5,bright));const k=new THREE.Mesh(new THREE.SphereGeometry(.12,10,8),orange);k.position.x=.3;hw.add(k);
+  part(g,hw,1.45,-1.45,.4,[1,0,0],'x',2);
+  return g;
+},
+worm(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),brass=M(0xc9a23c,.8,.3),bright=M(0xd2d9de,.9,.2);
+  const wheel=makeGear(30,.12,.45,0xc9a23c,false);wheel.rotation.x=Math.PI/2;
+  const wr=new THREE.Group();wr.add(wheel);
+  part(g,wr,0,0,0,[0,0,.9],'y',.5);
+  const worm=new THREE.Group();
+  const core=cylX(.3,3.0,bright);worm.add(core);
+  for(let i=0;i<10;i++){const t=new THREE.Mesh(new THREE.TorusGeometry(.33,.07,8,20),bright);t.rotation.y=Math.PI/2;t.position.x=-1.2+i*.27;worm.add(t)}
+  part(g,worm,0,-1.9,0,[0,-.8,0],'x',15);
+  part(g,wrap(new THREE.Mesh(new THREE.CylinderGeometry(.14,.14,1.4,16),bright)),0,0,0,[0,0,-.9],'y',.5);
+  return g;
+},
+rack(){
+  const g=new THREE.Group(),steel=M(0xaab4bc,.85,.3);
+  const m=.2,z=18,p=Math.PI*m,pr=m*z/2;
+  const pinion=makeGear(z,m,.6,0x1B4DDB,false);
+  const pw=new THREE.Group();pw.add(pinion);
+  const rackG=new THREE.Group();
+  const bar=box(6.6,.3,.6,steel);bar.position.y=-pr-m*1.1-.15;rackG.add(bar);
+  for(let i=0;i<11;i++){const t=box(p*.45,.4,.6,steel);t.position.set(-3.1+i*p,-pr-.02,0);rackG.add(t)}
+  part(g,pw,0,0,0,[0,.9,0],null,null,ph=>{pw.rotation.z=ph*.5});
+  part(g,rackG,0,0,0,[0,-.9,0],null,null,ph=>{rackG.userData.off.x=(pr*ph*.5)%p});
+  return g;
+},
+chain(){
+  const g=new THREE.Group(),dark=M(0x2b333b,.7,.4);
+  const m=.12,R1=m*12/2,R2=m*24/2,x1=-2.0,x2=1.6,d=x2-x1,a0=Math.acos((R2-R1)/d);
+  part(g,wrap(makeGear(12,m,.3,0x1B4DDB,false)),x1,0,0,[0,0,-.6],'z',2);
+  part(g,wrap(makeGear(24,m,.3,0xb9c3cc,false)),x2,0,0,[0,0,-.6],'z',1);
+  const pts=[];
+  for(let i=0;i<=24;i++){const a=a0+(2*Math.PI-2*a0)*i/24;pts.push(new THREE.Vector3(x1+Math.cos(a)*R1,Math.sin(a)*R1,0))}
+  for(let i=0;i<=24;i++){const a=-a0+2*a0*i/24;pts.push(new THREE.Vector3(x2+Math.cos(a)*R2,Math.sin(a)*R2,0))}
+  const seg=[],cum=[0];let tot=0;
+  for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];const l=Math.hypot(b.x-a.x,b.y-a.y);seg.push(l);tot+=l;cum.push(tot)}
+  const at=sx=>{sx=((sx%tot)+tot)%tot;let i=0;while(i<seg.length-1&&cum[i+1]<sx)i++;const t=(sx-cum[i])/seg[i],a=pts[i],b=pts[(i+1)%pts.length];return {x:a.x+(b.x-a.x)*t,y:a.y+(b.y-a.y)*t,ang:Math.atan2(b.y-a.y,b.x-a.x)}};
+  const N=40,ch=new THREE.Group(),links=[];
+  for(let i=0;i<N;i++){const l=box(tot/N*.7,.06,.28,dark);ch.add(l);links.push(l)}
+  const place=sh=>links.forEach((l,i)=>{const q=at(i*tot/N+sh);l.position.set(q.x,q.y,0);l.rotation.z=q.ang});
+  place(0);
+  part(g,ch,0,0,0,[0,0,.8],null,null,ph=>place(R1*ph*2));
+  return g;
+},
+ujoint(){
+  const g=new THREE.Group(),steel=M(0x8a97a2,.85,.3),blue=M(0x1B4DDB,.4,.45),bright=M(0xd2d9de,.9,.2);
+  const fork=(sign)=>{const f=new THREE.Group();
+    const cup=new THREE.Mesh(new THREE.TorusGeometry(.6,.1,8,20,Math.PI),blue);cup.rotation.y=Math.PI/2;f.add(cup);
+    return f};
+  const left=new THREE.Group();left.add(cylX(.28,1.6,bright));
+  const lf=fork();lf.position.x=.8;left.add(lf);
+  part(g,left,-1.6,0,0,[-1,0,0],'x',2);
+  const right=new THREE.Group();right.add(cylX(.28,1.6,bright));
+  const rf=fork();rf.position.x=-.8;rf.rotation.x=Math.PI/2;right.add(rf);
+  const pr=new THREE.Group();pr.add(right);
+  right.position.set(0,0,0);
+  part(g,pr,1.6,0,0,[1,0,0],null,null,ph=>{right.rotation.x=ph});
+  const cross=new THREE.Group();cross.add(cylY(.12,1.3,steel));cross.add(cylZ(.12,1.3,steel));cross.add(new THREE.Mesh(new THREE.SphereGeometry(.2,12,10),steel));
+  part(g,cross,0,0,0,[0,.7,.7],null,null,ph=>{cross.rotation.x=ph});
+  return g;
+},
+fourbar(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),orange=M(0xF26B1D,.3,.5),steel=M(0xaab4bc,.85,.3),dark=M(0x2b333b,.6,.5);
+  const A=[-1.8,-1,0],D=[1.4,-1,0],r1=.8,r3=2.2,r4=1.9,L2=2.6;
+  const link=(len,mat)=>{const l=new THREE.Group();const b=box(len,.28,.16,mat);b.position.x=len/2;l.add(b);
+    [0,len].forEach(x=>{const p=cylZ(.2,.3,dark);p.position.x=x;l.add(p)});return l};
+  part(g,box(4.2,.3,.5,dark),-.2,-1.35,0,[0,-.8,0]);
+  const crank=link(r1,orange),coupler=link(L2,steel),rocker=link(r4,blue);
+  const sol=ph=>{
+    const bx=A[0]+r1*Math.cos(ph),by=A[1]+r1*Math.sin(ph);
+    const dx=D[0]-bx,dy=D[1]-by,d=Math.hypot(dx,dy);
+    const a=(L2*L2-r4*r4+d*d)/(2*d);const hh=Math.sqrt(Math.max(0,L2*L2-a*a));
+    const mx=bx+a*dx/d,my=by+a*dy/d;
+    const cx=mx-hh*dy/d,cy=my+hh*dx/d;
+    return {bx,by,cx,cy};
+  };
+  part(g,crank,A[0],A[1],0,[0,0,.8],null,null,ph=>{crank.rotation.z=ph});
+  part(g,coupler,A[0]+r1,A[1],0,[0,0,0],null,null,ph=>{const q=sol(ph);coupler.userData.off.set(q.bx-(A[0]+r1),q.by-A[1],0);coupler.rotation.z=Math.atan2(q.cy-q.by,q.cx-q.bx)});
+  part(g,rocker,D[0],D[1],0,[0,0,-.8],null,null,ph=>{const q=sol(ph);rocker.rotation.z=Math.atan2(q.cy-D[1],q.cx-D[0])});
+  return g;
+},
+jack(){
+  const g=new THREE.Group(),blue=M(0x1B4DDB,.4,.45),dark=M(0x2b333b,.6,.5),bright=M(0xd2d9de,.9,.2),orange=M(0xF26B1D,.3,.5);
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(1.1,1.2,.4,32),dark),0,-1.6,0,[0,-.8,0]);
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(.9,.9,2.4,32),blue),0,-.3,0,[0,-.3,0]);
+  part(g,new THREE.Mesh(new THREE.CylinderGeometry(.55,.55,1.8,28),bright),0,1.5,0,[0,1,0]);
+  const ram=new THREE.Group();ram.add(new THREE.Mesh(new THREE.CylinderGeometry(.5,.5,1.6,28),bright));
+  const cap=new THREE.Mesh(new THREE.CylinderGeometry(.65,.5,.25,28),orange);cap.position.y=.9;ram.add(cap);
+  part(g,ram,0,1.3,0,[0,1.3,0],null,null,ph=>ram.userData.off.set(0,.5*(1-Math.cos(ph*.7))/2,0));
+  const hd=cylX(.1,3.2,dark);hd.position.x=1.6;
+  const hk=new THREE.Group();hk.add(hd);
+  part(g,hk,.9,-.4,0,[1.2,0,0],null,null,ph=>{hk.rotation.z=.25*Math.sin(ph*2.4)});
+  part(g,cylX(.16,.7,bright),1.1,-.4,0,[.8,0,0]);
+  return g;
+},
+pipewrench(){
+  const g=new THREE.Group(),red=M(0xB3261E,.5,.4),steel=M(0x8a97a2,.85,.3),dark=M(0x2b333b,.6,.5);
+  part(g,box(4.6,.5,.25,red),0,0,0,[0,0,0]);
+  const hook=new THREE.Mesh(new THREE.TorusGeometry(.7,.2,10,24,Math.PI*1.4),red);hook.rotation.z=Math.PI/2+.3;
+  part(g,hook,2.4,.55,0,[.6,.6,0]);
+  part(g,box(.7,.9,.25,steel),-2.5,.35,0,[-.7,.6,0]);
+  const nut=new THREE.Mesh(new THREE.CylinderGeometry(.35,.35,.45,18),dark);nut.rotation.x=Math.PI/2;
+  part(g,nut,-1.6,-.05,0,[-.2,-.8,0],'z',.5);
+  return g;
+},
+torch(){
+  const g=new THREE.Group(),brass=M(0xc9a23c,.85,.3),dark=M(0x2b333b,.6,.5),red=M(0xB3261E,.4,.5),green=M(0x1F8F5F,.4,.5),bright=M(0xd2d9de,.9,.2);
+  part(g,cylX(.2,2.6,brass),-.2,0,0,[0,.2,0]);
+  part(g,cylX(.28,1.0,dark),-1.9,0,0,[-.6,0,0]);
+  part(g,cylX(.1,2.2,bright),1.9,0,0,[.8,0,0]);
+  const tip=new THREE.Mesh(new THREE.ConeGeometry(.12,.5,12),brass);tip.rotation.z=-Math.PI/2;
+  part(g,tip,3.2,0,0,[1.2,0,0]);
+  const f=new THREE.Mesh(new THREE.ConeGeometry(.12,1.2,12),new THREE.MeshStandardMaterial({color:0xFF9A3C,emissive:0xFF6A00,emissiveIntensity:.8,transparent:true,opacity:.85}));
+  f.rotation.z=-Math.PI/2;
+  part(g,f,3.95,0,0,[1.4,0,0],null,null,ph=>{f.scale.set(1+.12*Math.sin(ph*7),1,1)});
+  [[red,.55],[green,-.55]].forEach(([m,z])=>{
+    const kn=new THREE.Mesh(new THREE.CylinderGeometry(.18,.18,.25,16),m);kn.position.set(0,.36,0);
+    const gr=new THREE.Group();gr.add(kn);
+    part(g,gr,-.7+(z>0?.5:-.1),0,0,[0,.8,0]);
+  });
+  const hose=(m,z)=>new THREE.Mesh(new THREE.CylinderGeometry(.06,.06,1.6,10),m);
+  const h1=hose(red);h1.rotation.z=Math.PI/2;part(g,h1,-3.1,.1,.2,[-1,0,.3]);
+  const h2=hose(green);h2.rotation.z=Math.PI/2;part(g,h2,-3.1,-.1,-.2,[-1,0,-.3]);
+  return g;
+},
+flywheel(){
+  const g=new THREE.Group(),dark=M(0x3a4752,.7,.4),orange=M(0xF26B1D,.3,.5),bright=M(0xd2d9de,.9,.2),lining=M(0x8a6a3c,.1,.9);
+  const fw=makeGear(40,.1,.5,0x56636f,true);
+  part(g,fw,0,0,0,[0,0,-.8],'z',1.5);
+  const cl=new THREE.Group();
+  cl.add(cylZ(1.7,.14,lining));
+  const hub=cylZ(.4,.3,bright);cl.add(hub);
+  for(let i=0;i<6;i++){const a=i*Math.PI/3,sp=box(.14,.9,.1,orange);sp.position.set(Math.cos(a)*.9,Math.sin(a)*.9,0);sp.rotation.z=a-Math.PI/2;cl.add(sp)}
+  part(g,cl,0,0,.45,[0,0,.8],'z',1.5);
+  part(g,wrap(cylZ(.18,2.0,bright)),0,0,0,[0,0,1.6],'z',1.5);
+  return g;
+}
+});
+
+/* ---- tool viewer ---- */
+const tool=makeStage($('toolCanvas'),12);
+const holder=new THREE.Group();tool.scene.add(holder);
+let current=null,parts=[],explodeT=0,explodeTarget=0,running=true,auto=false;
+function disposeTree(o){o.traverse(c=>{if(c.geometry)c.geometry.dispose()})}
+function loadTool(id){
+  if(current){holder.remove(current);disposeTree(current)}
+  const model=BUILD[id]();
+  const bb=new THREE.Box3().setFromObject(model),ctr=bb.getCenter(new THREE.Vector3()),sz=bb.getSize(new THREE.Vector3());
+  model.children.forEach(c=>{c.position.sub(ctr);c.userData.base.sub(ctr)});
+  holder.scale.setScalar(5.4/Math.max(sz.x,sz.y,sz.z));
+  holder.rotation.set(.4,-.6,0);
+  current=model;parts=model.children;holder.add(model);
+  explodeT=explodeTarget=0;$('explode').value=0;
+  setWire($('bWire').getAttribute('aria-pressed')==='true');
+  const t=TOOLS.find(x=>x.id===id);
+  $('info').innerHTML=`<h3>${t.n}</h3><div class="cat">${t.c}</div><p>${t.d}</p>
+   <h4>Typical specification</h4><ul>${t.s.map(r=>`<li><span>${r[0]}</span><span>${r[1]}</span></li>`).join('')}</ul>
+   <div class="safety"><b>Safety:</b> ${t.w}</div>`;
+  curId=id;renderToolDetail(id);
+}
+function setWire(on){current&&current.traverse(o=>{if(o.material){(Array.isArray(o.material)?o.material:[o.material]).forEach(m=>m.wireframe=on)}})}
+let curId='lathe';
+const CATLIST=[...new Set(TOOLS.map(t=>t.cat))];
+const CCOL=['#1B4DDB','#F26B1D','#1F8F5F','#7A4FD0','#B3261E','#0F8EA3','#566573','#C58A00'];
+let wsCat='All';
+$('toolCount').textContent=TOOLS.length;
+function renderCatalogue(){
+  const q=$('wsSearch').value.trim().toLowerCase();
+  $('wsChips').innerHTML=['All',...CATLIST].map(c=>`<button class="chip" data-c="${c}" aria-pressed="${c===wsCat}">${c}${c==='All'?' ('+TOOLS.length+')':''}</button>`).join('');
+  $('wsChips').querySelectorAll('.chip').forEach(b=>b.onclick=()=>{wsCat=b.dataset.c;renderCatalogue()});
+  const list=TOOLS.filter(t=>(wsCat==='All'||t.cat===wsCat)&&(t.n+' '+t.c+' '+t.cat).toLowerCase().includes(q));
+  $('toolGrid').innerHTML=list.length?list.map(t=>`<a class="tcard" href="#/tool/${t.id}" style="border-top-color:${CCOL[CATLIST.indexOf(t.cat)%CCOL.length]}"><span class="tc-cat">${esc(t.cat)}</span><h3>${esc(t.n)}</h3><p>${esc(t.d.split('. ')[0].replace(/\.$/,'')+'.')}</p><span class="tc-go">Open in 3D with full details</span></a>`).join(''):'<p class="empty">No tool matches that search.</p>';
+}
+$('wsSearch').oninput=renderCatalogue;renderCatalogue();
+function renderToolDetail(id){
+  const t=TOOLS.find(x=>x.id===id),d=TOOL_DETAILS[id]||{};
+  const i=TOOLS.indexOf(t),prev=TOOLS[(i+TOOLS.length-1)%TOOLS.length],next=TOOLS[(i+1)%TOOLS.length];
+  const rel=TOOLS.filter(x=>x.cat===t.cat&&x.id!==id);
+  $('tpName').textContent=t.n;$('tpCat').textContent=t.cat;
+  document.title=t.n+' | Mechanical Engineering workshop';
+  const li=a=>(a||[]).map(x=>`<li>${esc(x)}</li>`).join('');
+  const machine=['Machine tools','Welding'].includes(t.cat);
+  $('tdetail').innerHTML=`
+   <div class="tblock wide"><h3>How it works</h3><p>${esc(d.how||t.d)}</p></div>
+   <div class="tblock"><h3>Main parts</h3><ul>${li(d.parts)}</ul></div>
+   <div class="tblock"><h3>Where it is used</h3><ul>${li(d.uses)}</ul></div>
+   <div class="tblock"><h3>How to use it</h3><ol>${li(d.steps)}</ol></div>
+   <div class="tblock"><h3>Care and safety</h3><p>${esc(d.care||'')}</p><div class="safety"><b>Safety:</b> ${esc(t.w)}</div></div>
+   <div class="tblock wide"><h3>Viva questions</h3>${(d.viva||[]).map(v=>`<details><summary>${esc(v[0])}</summary><p>${esc(v[1])}</p></details>`).join('')}</div>
+   ${machine?`<div class="tblock wide"><a class="btn" href="#/booking">Book a session on this machine</a></div>`:''}
+   <div class="tblock wide"><h3>More in ${esc(t.cat.toLowerCase())}</h3><div class="rel">${rel.length?rel.map(r=>`<a href="#/tool/${r.id}">${esc(r.n)}</a>`).join(''):'<span style="color:#8FA2B3">This is the only tool in its category.</span>'}</div></div>
+   <div class="tnav"><a href="#/tool/${prev.id}">Previous: ${esc(prev.n)}</a><a href="#/tool/${next.id}">Next: ${esc(next.n)}</a></div>`;
+}
+$('explode').oninput=e=>explodeTarget=e.target.value/100;
+const tg=(id,fn)=>{$(id).onclick=()=>{const v=$(id).getAttribute('aria-pressed')!=='true';$(id).setAttribute('aria-pressed',v);fn(v)}};
+tg('bSpin',v=>running=v);tg('bAuto',v=>auto=v);tg('bWire',setWire);
+$('bZin').onclick=()=>tool.camera.position.z=Math.max(6,tool.camera.position.z-1.5);
+$('bZout').onclick=()=>tool.camera.position.z=Math.min(18,tool.camera.position.z+1.5);
+enableDrag($('toolCanvas'),()=>holder);
+if(reduceMotion){running=false;$('bSpin').setAttribute('aria-pressed','false')}
+else{auto=true;$('bAuto').setAttribute('aria-pressed','true')}
+loadTool('lathe');
+
+/* ---- loop ---- */
+let last=performance.now(),phase=0;
+function frame(now){
+  requestAnimationFrame(frame);
+  const dt=Math.min(.05,(now-last)/1000);last=now;
+  if(hero.visible){
+    if(!reduceMotion){
+      const a=now/1000*.9;
+      gA.rotation.z=a;
+      const sA=Math.PI*2/gz1,sB=Math.PI*2/gz2;
+      gB.rotation.z=Math.PI-.825*sB-(a+.325*sA)*(gz1/gz2);
+    }
+    hero.renderer.render(hero.scene,hero.camera);
+  }
+  if(tool.visible){
+    if(running)phase+=dt*2;
+    explodeT+=(explodeTarget-explodeT)*Math.min(1,dt*6);
+    parts.forEach(p=>{
+      if(p.userData.upd)p.userData.upd(phase);
+      p.position.copy(p.userData.base).add(p.userData.off).addScaledVector(p.userData.dir,explodeT*1.6);
+      if(running&&p.userData.spin)p.rotation[p.userData.spin]+=dt*2*p.userData.spd;
+    });
+    if(auto)holder.rotation.y+=dt*.35;
+    tool.renderer.render(tool.scene,tool.camera);
+  }
+}
+requestAnimationFrame(frame);
+/* ============ ACADEMICS, MATERIALS, QUIZ ============ */
+$('accList').innerHTML=SEMS.map((x,i)=>`<details ${i===2?'open':''}><summary>${x[0]}</summary><ul>${x[1].map(t=>`<li>${t}</li>`).join('')}</ul></details>`).join('');
+(function(){
+  const dayIdx=(new Date().getDay()+6)%7; // Monday=0
+  $('ttTable').innerHTML='<thead><tr><th>Day</th>'+TT_SLOTS.map(t=>`<th>${t}</th>`).join('')+'</tr></thead><tbody>'+TT_DAYS.map((d,i)=>`<tr><th>${d}</th>${TT[i].map(c=>`<td class="${i===dayIdx?'now':''}">${c}</td>`).join('')}</tr>`).join('')+'</tbody>';
+})();
+function renderMats(){
+  const q=$('matSearch').value.toLowerCase();
+  const rows=MATS.filter(m=>(m[0]+m[1]+m[6]).toLowerCase().includes(q));
+  $('matTable').innerHTML='<thead><tr><th>Material</th><th>Type</th><th>Density (kg/m³)</th><th>E (GPa)</th><th>Yield (MPa)</th><th>UTS (MPa)</th><th>Typical use</th></tr></thead><tbody>'+
+   (rows.length?rows.map(m=>`<tr><td>${m[0]}</td><td>${m[1]}</td><td class="n">${m[2]}</td><td class="n">${m[3]}</td><td class="n">${m[4]}</td><td class="n">${m[5]}</td><td>${m[6]}</td></tr>`).join(''):'<tr><td colspan="7">No material matches that search. Try a shorter word.</td></tr>')+'</tbody>';
+}
+$('matSearch').oninput=renderMats;renderMats();
+
+let qi=0,qs=0,qAnswered=false;
+function renderQuiz(){
+  const box=$('quizBox'),best=store.get('quiz_best');
+  if(qi>=QUIZ.length){
+    if(best===null||qs>best)store.set('quiz_best',qs);
+    const u=getUser();if(u){const sc=store.get('quiz_scores')||{};sc[u.id]=Math.max(sc[u.id]||0,qs);store.set('quiz_scores',sc)}
+    box.innerHTML=`<p class="q-meta"><span>Finished</span><span>Best: ${Math.max(best||0,qs)} / ${QUIZ.length}</span></p><p class="q-q">You scored ${qs} out of ${QUIZ.length}.</p><button class="btn" id="qAgain">Try again</button>`;
+    $('qAgain').onclick=()=>{qi=0;qs=0;renderQuiz()};return;
+  }
+  const q=QUIZ[qi];qAnswered=false;
+  box.innerHTML=`<p class="q-meta"><span>Question ${qi+1} of ${QUIZ.length}</span><span>Score ${qs}${best!==null?' · Best '+best:''}</span></p><p class="q-q">${esc(q[0])}</p><div class="q-opts">${q[1].map((o,i)=>`<button data-i="${i}">${esc(o)}</button>`).join('')}</div><p class="msg" id="qMsg" role="status"></p><button class="btn" id="qNext" hidden>${qi===QUIZ.length-1?'See result':'Next question'}</button>`;
+  box.querySelectorAll('.q-opts button').forEach(b=>b.onclick=()=>{
+    if(qAnswered)return;qAnswered=true;
+    const i=+b.dataset.i;
+    box.querySelectorAll('.q-opts button').forEach((x,j)=>{x.disabled=true;if(j===q[2])x.classList.add('right')});
+    if(i===q[2]){qs++;$('qMsg').textContent='Correct.'}else{b.classList.add('wrong');$('qMsg').style.color='#B3261E';$('qMsg').textContent='Not quite. The right answer is highlighted.'}
+    $('qNext').hidden=false;
+  });
+  $('qNext').onclick=()=>{qi++;renderQuiz()};
+}
+renderQuiz();
+
+/* theme */
+(function(){
+  const t=store.get('mech_theme');if(t==='dark')document.body.classList.add('dark');
+  const btn=$('themeBtn');
+  const upd=()=>btn.textContent=document.body.classList.contains('dark')?'Light':'Dark';
+  btn.onclick=()=>{document.body.classList.toggle('dark');store.set('mech_theme',document.body.classList.contains('dark')?'dark':'light');upd()};
+  upd();
+})();
+
+/* ============ AUTH, LOGIN PAGES, DASHBOARDS ============ */
+let loginRole='student',pendingTool=null;
+const views={home:$('top'),login:$('view-login'),dash:$('view-dash')};
+const showView=v=>Object.entries(views).forEach(([k,el])=>el.hidden=k!==v);
+const fmtDate=d=>d.toLocaleDateString('en-GB',{day:'2-digit',month:'short',year:'numeric'});
+
+function renderAuth(){
+  const u=getUser();
+  $('authArea').innerHTML=u
+    ?`<a href="#/dashboard" class="chip-user">${esc(u.name)} (${u.role})</a><button class="btn sm ghost" id="logoutBtn">Log out</button>`
+    :`<a class="btn sm ghost" href="#/student-login">Student login</a><a class="btn sm" href="#/teacher-login">Teacher login</a>`;
+  const lb=$('logoutBtn');if(lb)lb.onclick=()=>{setUser(null);location.hash='#/';syncBooking();renderAuth()};
+  $('authArea').dataset.state=u?'in':'out';
+  $('loginQuick').innerHTML=u?`<a class="btn sm" href="#/dashboard">My portal</a>`:`<a class="btn sm" href="#/login">Login</a>`;
+}
+
+const LOGIN={
+  student:{h:'Student login',sub:'Log in with your roll number, or continue as a guest to look around.',idl:'Roll number or college email',side:'Your lab, your schedule.',list:['Request machine slots in a few taps','Open every workshop tool in 3D','Read notices from your teachers'],guest:'Continue as guest student',sw:'Are you a teacher? Go to teacher login',swh:'#/teacher-login'},
+  teacher:{h:'Teacher login',sub:'Log in with your faculty ID, or continue as a guest to try the tools.',idl:'Faculty ID or college email',side:'Run the workshop with less paperwork.',list:['Approve or reject student machine bookings','Post notices to the whole department','Book machines for your own classes'],guest:'Continue as guest teacher',sw:'Are you a student? Go to student login',swh:'#/student-login'}
+};
+function renderLogin(role){
+  loginRole=role;const L=LOGIN[role];
+  $('loginBox').className='login '+role;
+  $('lgH').textContent=L.h;$('lgSub').textContent=L.sub;$('lgIdLbl').textContent=L.idl;
+  $('lgSideH').textContent=L.side;$('lgSideList').innerHTML=L.list.map(x=>`<li>${x}</li>`).join('');
+  $('lgGuest').textContent=L.guest;$('lgSwitch').textContent=L.sw;$('lgSwitch').href=L.swh;
+  $('lgMsg').textContent='';setAuthMode('in');
+}
+
+/* local accounts */
+let authMode='in';
+const sha=async t=>{try{const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(t));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}catch(e){return 'p:'+btoa(unescape(encodeURIComponent(t)))}};
+const accounts=()=>store.get('accounts')||[];
+function setAuthMode(m){
+  authMode=m;
+  $('tabIn').setAttribute('aria-selected',m==='in');$('tabUp').setAttribute('aria-selected',m==='up');
+  $('lgNameRow').hidden=m!=='up';$('lgCodeRow').hidden=!(m==='up'&&loginRole==='teacher');
+  $('lgSubmit').textContent=m==='in'?'Log in':'Create account';$('lgMsg').textContent='';
+}
+$('tabIn').onclick=()=>setAuthMode('in');$('tabUp').onclick=()=>setAuthMode('up');
+$('lgForm').onsubmit=async e=>{
+  e.preventDefault();
+  const id=$('lgId').value.trim().toLowerCase(),pw=$('lgPw').value,msg=$('lgMsg');msg.className='msg warn';
+  if(!id||!pw){msg.textContent='Enter your ID and password.';return}
+  const h=await sha(pw+'|'+id);
+  if(authMode==='up'){
+    const nm=$('lgFull').value.trim();
+    if(!nm){msg.textContent='Enter your full name.';return}
+    if(pw.length<6){msg.textContent='Use a password with at least 6 characters.';return}
+    if(loginRole==='teacher'&&$('lgCode').value.trim()!=='MECH-FAC-2026'){msg.textContent='That faculty code is not correct.';return}
+    const list=accounts();
+    if(list.some(a=>a.id===id&&a.role===loginRole)){msg.textContent='This ID already has an account. Use Log in.';return}
+    const acc={uid:'u'+Date.now().toString(36),id,role:loginRole,name:nm,h};
+    list.push(acc);store.set('accounts',list);
+    setUser({id:acc.uid,role:loginRole,name:nm,guest:false});location.hash='#/dashboard';
+  }else{
+    const acc=accounts().find(a=>a.id===id&&a.role===loginRole&&a.h===h);
+    if(!acc){msg.textContent='ID or password is wrong, or no account exists yet. Use Sign up to create one.';return}
+    setUser({id:acc.uid,role:acc.role,name:acc.name,guest:false});location.hash='#/dashboard';
+  }
+};
+
+$('lgGuest').onclick=()=>{
+  const nm=$('lgName').value.trim()||(loginRole==='student'?'Guest student':'Guest teacher');
+  setUser({id:'g'+Date.now().toString(36),role:loginRole,name:nm,guest:true});
+  $('lgName').value='';
+  location.hash='#/dashboard';
+};
+
+const ROLL=['Aarav Mehta','Diya Sharma','Rohan Patil','Sneha Iyer','Kabir Singh','Ananya Das','Vikram Rao','Meera Joshi'];
+const todayKey=()=>new Date().toISOString().slice(0,10);
+function renderDash(u){
+  const T=u.role==='teacher',el=$('view-dash');
+  const mine=bookings.filter(b=>b.uid===u.id);
+  const allNotices=[...(store.get('notices')||[]),...NOTICES];
+  const ownNotices=(store.get('notices')||[]).filter(n=>n.uid===u.id);
+  const tod=TOOLS[new Date().getDate()%TOOLS.length];
+  const assigns=store.get('assignments')||[];
+  const done=(store.get('done')||{})[u.id]||[];
+  const att=store.get('attendance')||{};
+  const dayIdx=(new Date().getDay()+6)%7;
+  const bk=(b,t)=>`<li><span><b>${esc(b.m)}</b> <span class="st ${b.status}">${b.status}</span><br>${esc(b.d)}, ${SLOTS[b.s][0]}${t?`<br>${esc(b.who)} (${b.role})`:''}</span><span class="acts">${t&&b.status==='Pending'?`<button data-ap="${b.id}">Approve</button><button data-rj="${b.id}">Reject</button>`:''}${!t?`<button data-cx="${b.id}">Cancel</button>`:''}</span></li>`;
+  const nl=allNotices.slice(0,4).map(n=>`<li><span><b>${esc(n.t)}</b><br>${esc(n.d)}</span></li>`).join('');
+  const asLi=(a,t)=>`<li><span class="${!t&&done.includes(a.id)?'todo-done':''}"><b>${esc(a.t)}</b><br>${esc(a.sub)} · due ${esc(a.due)}${a.by?` · ${esc(a.by)}`:''}</span><span class="acts">${t?(a.uid===u.id?`<button data-da="${a.id}">Delete</button>`:''):`<button data-dn2="${a.id}">${done.includes(a.id)?'Undo':'Mark done'}</button>`}</span></li>`;
+  const doneCount=assigns.filter(a=>done.includes(a.id)).length;
+  const pct=assigns.length?Math.round(doneCount/assigns.length*100):0;
+  const myAtt=att[u.id]||{p:0,t:0};
+  const attPct=myAtt.t?Math.round(myAtt.p/myAtt.t*100):null;
+  const quizBest=(store.get('quiz_scores')||{})[u.id];
+  const tt=TT[Math.min(dayIdx,5)].map((c,i)=>`<li><span><b>${TT_SLOTS[i]}</b> ${esc(c)}</span></li>`).join('');
+  const attRows=ROLL.map(n=>{const v=(att.day&&att.day[todayKey()]||{})[n];return `<div class="att-row"><span>${esc(n)}</span><span class="tg"><button data-p="${esc(n)}" class="${v==='P'?'on':''}">Present</button><button data-a="${esc(n)}" class="off ${v==='A'?'on':''}">Absent</button></span></div>`}).join('');
+  const left=T
+    ?`<div class="panel"><h2>Booking requests</h2><ul class="dlist">${bookings.length?bookings.slice().reverse().map(b=>bk(b,true)).join(''):'<li>No requests yet.</li>'}</ul></div>
+      <div class="panel"><h2>Post an assignment</h2><form id="aForm" class="dform"><input id="aT" placeholder="Title, for example Gear train problems" required><input id="aS" placeholder="Subject" required><input id="aD" type="date" required><button class="btn" type="submit">Post assignment</button></form><ul class="dlist" style="margin-top:12px">${assigns.map(a=>asLi(a,true)).join('')||'<li>No assignments posted.</li>'}</ul></div>
+      <div class="panel"><h2>Post a notice</h2><form id="nForm" class="dform"><input id="nT" placeholder="Title" required><textarea id="nP" placeholder="Details for students" required></textarea><select id="nG"><option value="event|Event">Event</option><option value="exam|Exam">Exam</option><option value="lab|Workshop">Workshop</option></select><button class="btn" type="submit">Publish notice</button></form></div>`
+    :`<div class="panel"><h2>Assignments</h2><div class="bar"><i style="width:${pct}%"></i></div><p class="hint-line" style="margin-bottom:8px">${doneCount} of ${assigns.length} done</p><ul class="dlist">${assigns.map(a=>asLi(a,false)).join('')||'<li>No assignments yet. Your teachers will post them here.</li>'}</ul></div>
+      <div class="panel"><h2>My machine bookings</h2><ul class="dlist">${mine.length?mine.map(b=>bk(b,false)).join(''):'<li>No bookings yet. Use Book to request a slot.</li>'}</ul></div>`;
+  const right=T
+    ?`<div class="panel"><h2>Mark attendance, ${todayKey()}</h2>${attRows}<p class="hint-line" style="margin-top:8px">Sample class list. Marks are saved on this device.</p></div>
+      <div class="panel"><h2>Notices you posted</h2><ul class="dlist">${ownNotices.length?ownNotices.map(n=>`<li><span><b>${esc(n.t)}</b><br>${esc(n.d)}</span><span class="acts"><button data-dn="${n.id}">Delete</button></span></li>`).join(''):'<li>Nothing posted yet.</li>'}</ul></div>`
+    :`<div class="panel"><h2>Today's classes</h2><ul class="dlist">${dayIdx<6?tt:'<li>No classes on Sunday.</li>'}</ul></div>
+      <div class="panel"><h2>My progress</h2><p class="hint-line">Attendance</p><div class="bar"><i style="width:${attPct||0}%"></i></div><p class="hint-line" style="margin-bottom:10px">${attPct===null?'Not marked yet':attPct+'%'}</p><p class="hint-line">Best quiz score: ${quizBest!=null?quizBest+' / '+QUIZ.length:'not attempted'} <a href="#/quiz" style="color:var(--blue);font-weight:600">Take quiz</a></p></div>
+      <div class="panel"><h2>Latest notices</h2><ul class="dlist">${nl}</ul></div>
+      <div class="panel"><h2>Tool of the day</h2><div class="tod"><h3>${esc(tod.n)}</h3><p>${esc(tod.d)}</p><button class="btn" id="todBtn">Open in 3D</button></div></div>`;
+  el.innerHTML=`<div class="wrap dash">
+    <div class="dash-head"><div><h1>Welcome, ${esc(u.name)}</h1><p class="lead">${u.guest?'You are using a guest session, so you can explore everything.':'You are signed in. Your data is saved on this device.'}</p></div><span class="role-badge ${u.role}">${u.role}</span></div>
+    <div class="quick"><a href="#/workshop">3D workshop</a><a href="#/booking">Book a machine</a><a href="#/calculators">Calculators</a><a href="#/materials">Materials</a><a href="#/quiz">Quiz</a><a href="#/notices">Notice board</a></div>
+    <div class="dash-grid"><div>${left}</div><div>${right}</div></div></div>`;
+  el.querySelectorAll('[data-cx]').forEach(b=>b.onclick=()=>{bookings=bookings.filter(x=>x.id!==+b.dataset.cx);saveB();renderDash(u);syncBooking()});
+  const setSt=(id,st)=>{const b=bookings.find(x=>x.id===id);if(b){b.status=st;saveB();renderDash(u);renderSlots()}};
+  el.querySelectorAll('[data-ap]').forEach(b=>b.onclick=()=>setSt(+b.dataset.ap,'Approved'));
+  el.querySelectorAll('[data-rj]').forEach(b=>b.onclick=()=>setSt(+b.dataset.rj,'Rejected'));
+  el.querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>{store.set('notices',(store.get('notices')||[]).filter(n=>n.id!==+b.dataset.dn));renderNotices();renderDash(u)});
+  el.querySelectorAll('[data-da]').forEach(b=>b.onclick=()=>{store.set('assignments',(store.get('assignments')||[]).filter(a=>a.id!==+b.dataset.da));renderDash(u)});
+  el.querySelectorAll('[data-dn2]').forEach(b=>b.onclick=()=>{
+    const all=store.get('done')||{};const cur=all[u.id]||[];const id=+b.dataset.dn2;
+    all[u.id]=cur.includes(id)?cur.filter(x=>x!==id):[...cur,id];store.set('done',all);renderDash(u);
+  });
+  const markAtt=(n,v)=>{
+    const a=store.get('attendance')||{};a.day=a.day||{};a.day[todayKey()]=a.day[todayKey()]||{};a.day[todayKey()][n]=v;
+    store.set('attendance',a);renderDash(u);
+  };
+  el.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>markAtt(b.dataset.p,'P'));
+  el.querySelectorAll('[data-a]').forEach(b=>b.onclick=()=>markAtt(b.dataset.a,'A'));
+  const nf=$('nForm');
+  if(nf)nf.onsubmit=e=>{
+    e.preventDefault();
+    const [g,gl]=$('nG').value.split('|');
+    const list=store.get('notices')||[];
+    list.unshift({id:Date.now(),d:fmtDate(new Date()),t:$('nT').value.trim(),p:$('nP').value.trim(),g,gl,by:u.name,uid:u.id});
+    store.set('notices',list);renderNotices();renderDash(u);
+  };
+  const af=$('aForm');
+  if(af)af.onsubmit=e=>{
+    e.preventDefault();
+    const list=store.get('assignments')||[];
+    list.unshift({id:Date.now(),t:$('aT').value.trim(),sub:$('aS').value.trim(),due:$('aD').value,by:u.name,uid:u.id});
+    store.set('assignments',list);renderDash(u);
+  };
+  const tb=$('todBtn');if(tb)tb.onclick=()=>{location.hash='#/tool/'+tod.id};
+}
+
+const PAGES={'':'home','home':'home','workshop':'workshop','faculty':'faculty','academics':'academics','students':'students','calculators':'tools','tools':'tools','booking':'book','book':'book','materials':'materials','quiz':'quiz','placements':'placements','notices':'notices','contact':'contact','login':'login'};
+const TITLES={home:'Home',workshop:'Workshop tools in 3D',faculty:'Faculty',academics:'Academics',students:'Student projects',tools:'Calculators',book:'Book a machine',materials:'Materials library',quiz:'Quiz',placements:'Placements',notices:'Notice board',contact:'Contact',login:'Log in'};
+const setPage=key=>document.querySelectorAll('#top > section').forEach(sec=>sec.hidden=sec.dataset.r!==key);
+function route(){
+  const h=location.hash||'#/';
+  navList.classList.remove('open');menuBtn.setAttribute('aria-expanded',false);
+  const parts=h.replace(/^#\/?/,'').split('/'),page=parts[0];
+  if(page==='student-login'||page==='teacher-login'){
+    if(getUser()){location.hash='#/dashboard';return}
+    renderLogin(page==='student-login'?'student':'teacher');showView('login');document.title=LOGIN[loginRole].h+' | Mechanical Engineering';
+  }else if(page==='dashboard'){
+    const u=getUser();
+    if(!u){location.hash='#/student-login';return}
+    renderDash(u);showView('dash');document.title='My portal | Mechanical Engineering';
+  }else if(page==='tool'){
+    if(!TOOLS.some(t=>t.id===parts[1])){location.hash='#/workshop';return}
+    showView('home');setPage('tool');loadTool(parts[1]);
+  }else{
+    const key=PAGES[page]||'home';
+    showView('home');setPage(key);
+    document.title=(key==='home'?'Department of Mechanical Engineering':TITLES[key]+' | Mechanical Engineering');
+  }
+  window.scrollTo(0,0);
+  renderAuth();syncBooking();
+}
+(function(){
+  const li=document.querySelector('li.more'),btn=li.querySelector('.more-btn');
+  btn.onclick=e=>{e.stopPropagation();const o=li.classList.toggle('open');btn.setAttribute('aria-expanded',o)};
+  document.addEventListener('click',e=>{if(!li.contains(e.target)){li.classList.remove('open');btn.setAttribute('aria-expanded',false)}});
+  li.querySelectorAll('a').forEach(a=>a.addEventListener('click',()=>li.classList.remove('open')));
+})();
+addEventListener('hashchange',route);
+route();
+</script>
+</body>
+</html>
