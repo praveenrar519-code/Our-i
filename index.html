@@ -274,7 +274,7 @@ let curUrl=null,seeking=false,toastT=null;
 const cur=()=>M.get(S.queue[S.qi]);
 const RATES=[0.75,1,1.25,1.5,2],SLEEPS=[0,15,30,60];
 
-function toast(msg){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},2600)}
+function toast(msg,ms){const t=$('#toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>{t.hidden=true},ms||2600)}
 
 function art(s,cls){
   if(!s)return `<span class="art empty ${cls||''}">${ico('music',cls==='xl'?56:22)}</span>`;
@@ -493,10 +493,10 @@ async function addFiles(files){
     const blob=new Blob([f],{type});
     const dur=await probe(blob);
     const up=await sb.storage.from(BUCKET).upload(path,blob,{contentType:type,upsert:false});
-    if(up.error){toast('Upload failed: '+up.error.message);continue}
+    if(up.error){toast('Upload failed: '+up.error.message+(up.error.statusCode?' ('+up.error.statusCode+')':''),12000);continue}
     const row={id,title:clean(f.name),name:f.name,size:f.size,duration:dur,path};
     const ins=await sb.from('songs').insert(row).select().single();
-    if(ins.error){await sb.storage.from(BUCKET).remove([path]);toast('Could not save '+row.title);continue}
+    if(ins.error){await sb.storage.from(BUCKET).remove([path]);toast('Saved the file but not the song row: '+ins.error.message,12000);continue}
     const rec={id,title:row.title,name:row.name,size:row.size,duration:dur,path,added:ins.data.created_at,liked:false};
     S.songs.push(rec);M.set(id,rec);fresh.push(rec);n++;
   }
